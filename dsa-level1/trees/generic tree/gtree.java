@@ -1,4 +1,9 @@
 import java.util.*;
+
+import javax.swing.CellEditor;
+
+import org.graalvm.compiler.graph.SuccessorEdges;
+
 /**
  * gtree
  */
@@ -454,13 +459,15 @@ public class gtree {
         Integer[]data={10,20,50,null,60,null,null,30,70,null,80
          ,110,null,120,null,null,90,null,null,40,100,null,null,null} ;
          Node root=construct(data);
-         traversals(root);
-         List<Integer>res=preorder(root);
-         System.out.println(res);
+        //  traversals(root);
+        //  List<Integer>res=preorder(root);
+        //  System.out.println(res);
 
         //  display(root);
         //  levelorder3(root);
         // levelorderzigzag(root);
+
+        mutlisolution(root);
     }
 
     public static boolean areSimilar(Node n1, Node n2) {
@@ -490,6 +497,7 @@ public class gtree {
 
         boolean res=true;
         int sz=n1.children.size();
+        //for checking symmetric u can just travel only upto n/2
         for(int i=0;i<sz;i++)
         {
           Node child1=n1.children.get(i);
@@ -502,6 +510,150 @@ public class gtree {
         }
         return res;
       }
+
+      public static boolean IsSymmetric(Node node) {
+        // write your code here
+         return areMirror(node,node);
+      }
+
+     //mutilsolver1 using global variable
+     static int min=Integer.MAX_VALUE;
+     static int max=Integer.MIN_VALUE;
+     static int ht=0;
+     static int size=0;
+
+     public static void multisolver1(Node node,int depth)
+     {
+         //pre-order
+         min=Math.min(min, node.data);
+         max=Math.max(max, node.data);
+         ht=Math.max(ht, depth);
+         size++;
+
+         for(Node child:node.children)
+         {
+            multisolver1(child,depth+1);
+         }
+     }
+
+     //mutisolver 2 using return type
+
+     public static class multisolver
+     {
+         int min;
+         int max;
+         int ht;
+         int sz;
+
+         multisolver(int min,int max,int ht,int sz)
+         {
+             this.min=min;
+             this.max=max;
+             this.ht=ht;
+             this.sz=sz;
+         }
+
+         multisolver()
+         {
+             this.min=Integer.MAX_VALUE;
+             this.max=Integer.MIN_VALUE;
+             this.ht=-1;
+             this.sz=0;
+         }
+     }
+
+     public static multisolver mutilsolver2(Node node)
+     {
+
+        multisolver mres=new multisolver(node.data,node.data,-1,1);
+        for(Node child:node.children)
+        {
+            multisolver rres=mutilsolver2(child);
+            mres.min=Math.min(mres.min,rres.min);
+            mres.max=Math.max(mres.max, rres.max);
+            mres.ht=Math.max(mres.ht, rres.ht);
+            mres.sz+=rres.sz;
+        }
+
+        mres.ht+=1;
+        return mres;
+
+     }
+     
+
+     public static void mutlisolution(Node root)
+     {
+
+        // multisolver1(root,0);
+
+        // System.out.println("Minimum valu:"+min);
+        // System.out.println("Max valu:"+max);
+        // System.out.println("height:"+ht);
+        // System.out.println("size:"+size);
+
+        multisolver res= mutilsolver2(root);
+
+        System.out.println("Minimum valu:"+res.min);
+        System.out.println("Max valu:"+res.max);
+        System.out.println("height:"+res.ht);
+        System.out.println("size:"+res.sz);
+        
+         
+     }
+
+     static Node predecessor;
+     static Node successor;
+     static int state=0;
+     public static void predecessorAndSuccessor(Node node, int data) {
+       // write your code here
+       if(state==0)
+       {
+           if(node.data==data)
+            state++;
+            else
+            predecessor=node;
+
+       }
+       else if(state==1)
+       {
+           successor=node;
+           state++;
+           return;
+
+       }
+      
+       for(Node child:node.children)
+       {
+           if(state!=2)
+        predecessorAndSuccessor(child,data);
+
+       }
+       
+     }
+
+     static int ceil=Integer.MAX_VALUE;    //qualified min;
+     static int floor=Integer.MIN_VALUE;  //qualified max;
+     public static void ceilAndFloor(Node node, int data) {
+       // Write your code here
+      if(node.data>data)
+      {
+          //ceil
+          if(node.data<ceil)
+            ceil=node.data;
+
+      }
+      else if(node.data<data)
+      {
+          //floor
+          if(node.data>floor)
+            floor=node.data;
+      }
+
+      for(Node child : node.children)
+      ceilAndFloor(child,data);
+
+       
+     }
         
 
     public static void main(String[] args) {
