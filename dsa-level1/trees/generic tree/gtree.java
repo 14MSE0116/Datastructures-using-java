@@ -467,7 +467,10 @@ public class gtree {
         //  levelorder3(root);
         // levelorderzigzag(root);
 
-        mutlisolution(root);
+        // mutlisolution(root);
+        // subtreesum(root);
+        IterativePreandPostOrder(root);
+        printsubseq("abc");
     }
 
     public static boolean areSimilar(Node n1, Node n2) {
@@ -654,6 +657,218 @@ public class gtree {
 
        
      }
+
+     public static int kthLargest(Node node, int k){
+        // write your code here
+        int data=Integer.MAX_VALUE;
+        for(int i=0;i<k;i++)
+        {
+           
+            floor=Integer.MIN_VALUE;
+            ceilAndFloor(node, data);
+            data=floor;
+        }
+        return data;
+      }
+
+      static int maxsum=Integer.MIN_VALUE;
+      static Node maxnode=null;
+      public static int treesum(Node node)
+      {
+          int sum=0;
+          for(Node child:node.children)
+          {
+             sum+=treesum(child);
+
+          }
+          sum+=node.data;
+          if(sum>maxsum)
+          {
+              maxsum=sum;
+              maxnode=node;
+          }
+          return sum;
+      }
+
+      public static int subtreesum(Node node)
+      {
+          int sum=0;
+          for(Node child:node.children)
+          {
+              sum+=subtreesum(child);
+          }
+          sum+=node.data;
+
+            System.out.println(node.data+"->"+sum);
+            return sum;
+      }
+
+      public static int diameter1(Node node)
+      {
+        int mh=-1;
+        int smh=-1;
+
+        //finding height from child
+        for(Node child:node.children)
+        {
+            int ht=height(child);
+            if(ht>=mh)
+            {
+                smh=mh;
+                mh=ht;
+            }
+            else if(ht>smh)
+            {
+                smh=ht;
+            }
+        }
+     
+        int dfc=0;  //diameter from child
+        for(Node child:node.children)
+        {
+            dfc=Math.max(dfc,diameter1(child));
+        }
+        return Math.max(dfc, mh+smh+2);
+
+      }
+      public static int diameter=0;
+
+      public static int heightfordiameter(Node node)
+      {
+          int mht=-1;   //max height
+          int smht=-1;  //second max height
+
+        for(Node child:node.children)
+        {
+            int ht=heightfordiameter(child);
+            if(ht>=mht)
+            {
+                smht=mht;
+                mht=ht;
+            }
+            else if(ht>smht)
+             {
+                 smht=ht;
+             }
+
+        }
+
+        diameter=Math.max(diameter, mht+smht+2);
+
+
+        //for height
+          return mht+1;
+      }
+
+
+      public static class Pair
+      {
+          Node node;
+          int state;
+
+          Pair(Node node,int state)
+          {
+              this.node=node;
+              this.state=state;
+          }
+      }
+      public static void IterativePreandPostOrder(Node node) {
+        // write your code here
+        Stack<Pair>st=new Stack<>();
+        String pre="";
+        String post="";
+        st.push(new Pair(node,0));
+        while(st.size()>0)
+        {
+          Pair p=st.peek();
+
+          //pre-area
+          if(p.state==0)
+          {
+              pre+=p.node.data+" ";
+              p.state++;
+
+          }
+
+          //in-area
+          else if(p.state<=p.node.children.size())
+          {
+              Node child=p.node.children.get(p.state-1);
+              p.state++;
+              st.push(new Pair(child,0));
+
+          }
+
+          //post-area
+          else if(p.state>p.node.children.size())
+          {
+              post+=p.node.data+" ";
+              st.pop();
+              
+          }
+        }
+        System.out.println(pre);
+        System.out.println(post);
+      }
+
+      public static class SSPair
+      {
+          String ques;
+          int state;
+          String ans;
+
+          SSPair(String ques,int state,String ans)
+          {
+              this.ques=ques;
+              this.state=state;
+              this.ans=ans;
+          }
+      }
+
+      public static void printsubseq(String str)
+      {
+          Stack<SSPair> st=new Stack<>();
+          st.push(new SSPair(str, 0, ""));
+          String res="";
+          while(st.size()>0)
+          {
+              SSPair p=st.peek();
+           
+              if(p.ques.length()==0)
+              {
+                  res+=p.ans+" ";
+                //   System.out.println(p.ans);
+                  st.pop();
+                  continue;
+              }
+
+              String roq=p.ques.substring(1) ;
+              char ch=p.ques.charAt(0);
+
+           if(p.state==0)
+            {
+                p.state++;
+                st.push(new SSPair(roq, 0, p.ans+ch+" "));               
+
+
+            }
+            else if(p.state==1)
+            {
+                p.state++;
+                st.push(new SSPair(roq, 0, p.ans+"-"));   
+
+            }
+            else
+            {
+                st.pop();
+
+            }
+
+          }
+          System.out.println(res);
+      }
+
+
         
 
     public static void main(String[] args) {
