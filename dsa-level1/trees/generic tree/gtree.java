@@ -1,9 +1,5 @@
 import java.util.*;
 
-import javax.swing.CellEditor;
-
-import org.graalvm.compiler.graph.SuccessorEdges;
-
 /**
  * gtree
  */
@@ -287,6 +283,25 @@ public class gtree {
         
     }
 
+    public static void mirror(Node node){
+        // write your code here
+            
+         for(Node child:node.children)
+         mirror(child);
+         
+         int l=0;
+         int r=node.children.size()-1;
+         while(l<r)
+         {
+             Node temp=node.children.get(l);
+             node.children.set(l,node.children.get(r));
+             node.children.set(r,temp);
+             l++;
+             r--;
+         }
+      
+      }
+
     public static void removeLeaves(Node node) {
         // preorder removal of leaf
 
@@ -452,7 +467,7 @@ public class gtree {
         return i+j+2;
       }
 
-    
+        
     
     public static void fun()
     {

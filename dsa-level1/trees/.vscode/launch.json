@@ -1,0 +1,35 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Launch binarytree",
+            "request": "launch",
+            "mainClass": "binarytree",
+            "projectName": "trees_831f5f1c"
+        },
+        {
+            "type": "java",
+            "name": "Launch gtree",
+            "request": "launch",
+            "mainClass": "gtree",
+            "projectName": "trees_831f5f1c"
+        },
+        {
+            "type": "java",
+            "name": "Launch practice",
+            "request": "launch",
+            "mainClass": "practice",
+            "projectName": "trees_831f5f1c"
+        }
+    ]
+}
