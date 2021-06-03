@@ -225,6 +225,199 @@ public class binarytree {
 
     }
 
+    public static void iterativePrePostInTraversal(Node node) {
+        // write your code here
+        String pre="";
+        String inord="";
+        String post="";
+
+        Stack<Pair>st=new Stack<>();
+        st.push(new Pair(node,0));
+        while(st.size()>0)
+        {
+            Pair p=st.peek();
+            if(p.state==0)
+            {
+                pre+=p.node.data+" ";
+                p.state++;
+                if(p.node.left!=null)
+                st.push(new Pair(p.node.left,0));
+
+
+            }
+            else if(p.state==1)
+            {
+                inord+=p.node.data+" ";
+                p.state++;
+                if(p.node.right!=null)
+                st.push(new Pair(p.node.right,0));
+                 
+
+
+            }
+            else 
+            {
+                post+=p.node.data+" ";
+                st.pop();
+
+            }
+        }
+        System.out.println(pre);
+        System.out.println(inord);
+        System.out.println(post);
+      }
+
+      public static boolean find(Node node, int data){
+        // write your code here
+        if(node==null)
+         return false;
+
+        if(node.data==data)
+         return true;
+
+         boolean lres=find(node.left,data);
+         if(lres==true)
+          return true;
+
+          boolean rres=find(node.right,data);
+          if(rres==true)
+           return true;
+
+          return false;
+      }
+
+      public static ArrayList<Integer> nodeToRootPath(Node node, int data){
+        // write your code here
+        if(node==null)
+        {
+            return new ArrayList<>();
+        }
+       if(node.data==data)
+        {
+            ArrayList<Integer>base=new ArrayList<>();
+            base.add(node.data);
+            return base;
+        }
+        
+        ArrayList<Integer>lres=nodeToRootPath(node.left,data);
+        if(lres.size()>0)
+        {
+            lres.add(node.data);
+            return lres;
+        }
+
+        ArrayList<Integer>rres=nodeToRootPath(node.right,data);
+        if(rres.size()>0)
+        {
+            rres.add(node.data);
+            return rres;
+        }
+
+        return new ArrayList<>();
+      }
+
+      public static void printKLevelsDown(Node node, int k){
+        // write your code here
+        if(node==null)
+         return;
+
+         if(k==0)
+         {
+          System.out.println(node.data);
+          return;
+         }
+
+         printKLevelsDown(node.left, k-1);
+         printKLevelsDown(node.right, k-1);
+      }
+
+      public static ArrayList<Node>nodeToRoot(Node node,int data)
+      {
+          if(node==null)
+           return new ArrayList<>();
+
+           if(node.data==data)
+           {
+               ArrayList<Node>base=new ArrayList<>();
+               base.add(node);
+               return base;
+           }
+
+           ArrayList<Node>lres=nodeToRoot(node.left,data);
+           if(lres.size()>0)
+           {
+               lres.add(node);
+               return lres;
+           }
+
+           ArrayList<Node>rres=nodeToRoot(node.right,data);
+           if(rres.size()>0)
+           {
+               rres.add(node);
+               return rres;
+           }
+
+           return new ArrayList<>();
+      }
+
+      public static void printKNodesFar(Node root, int data, int k) {
+        // write your code here
+        ArrayList<Node>n2rp=nodeToRoot(root, data);
+
+        Node blockage=null;
+        for(int i=0;i<n2rp.size() && k>=0;i++)
+        {
+            Node node=n2rp.get(i);
+            printkdown(node,blockage,k);
+            k--;
+            blockage=node;
+        }
+      }
+
+      public static void printkdown(Node node,Node blockage,int k)
+      {
+          if(node==null || node==blockage)
+           return;
+
+           if(k==0)
+           {
+               System.out.println(node.data);
+               return;
+           }
+
+           printkdown(node.left,blockage,k-1);
+           printkdown(node.right,blockage,k-1);
+      }
+
+      public static void pathToLeafFromRoot(Node node, String path, int sum, int lo, int hi){
+        // write your code here
+        if(node==null) return;
+
+        if(node.left!=null && node.right!=null)
+        {
+          pathToLeafFromRoot(node.left, path+node.data+" ", sum+node.data, lo, hi);
+          pathToLeafFromRoot(node.right, path+node.data+" ", sum+node.data, lo, hi);
+        }
+
+         else if(node.left!=null)
+         pathToLeafFromRoot(node.left, path+node.data+" ", sum+node.data, lo, hi);
+
+         else if(node.right!=null)
+         pathToLeafFromRoot(node.right, path+node.data+" ", sum+node.data, lo, hi);
+
+         else
+         {
+             sum+=node.data;
+             path+=node.data;
+             if(lo<=sum && sum<=hi)
+             {
+                 System.out.println(path);
+             }
+         }
+           
+      }
+    
+
 
 
 
