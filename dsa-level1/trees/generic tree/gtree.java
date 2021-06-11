@@ -1,4 +1,4 @@
-import java.util.*;
+ import java.util.*;
 
 /**
  * gtree
@@ -29,14 +29,13 @@ public class gtree {
 
     public static Node construct(Integer[]arr)
     {
-        Node root=new Node(); 
         Stack<Node>st=new Stack<>();
+        Node root=new Node();
         for(int i=0;i<arr.length;i++)
         {
-            Integer data=arr[i];
-            if(data!=null)
+            if(arr[i]!=null)
             {
-                Node nn=new Node(data);
+                Node nn=new Node(arr[i]);
                 if(st.size()==0)
                 {
                     root=nn;
@@ -44,12 +43,17 @@ public class gtree {
                 }
                 else
                 {
-                  st.peek().children.add(nn);
-                  st.push(nn);
+                    st.peek().children.add(nn);
+                    st.push(nn);
                 }
+
             }
             else
-            st.pop();
+            {
+                st.pop();
+            }
+
+
         }
         return root;
     }
@@ -478,14 +482,14 @@ public class gtree {
         //  List<Integer>res=preorder(root);
         //  System.out.println(res);
 
-        //  display(root);
+         display(root);
         //  levelorder3(root);
         // levelorderzigzag(root);
 
         // mutlisolution(root);
         // subtreesum(root);
-        IterativePreandPostOrder(root);
-        printsubseq("abc");
+        // IterativePreandPostOrder(root);
+        // printsubseq("abc");
     }
 
     public static boolean areSimilar(Node n1, Node n2) {

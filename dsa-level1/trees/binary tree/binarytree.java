@@ -1,5 +1,7 @@
 import java.util.*;
 
+import javax.lang.model.util.ElementScanner14;
+
 import java.io.*;
 
 public class binarytree {
@@ -35,37 +37,27 @@ public class binarytree {
 
         Node root = new Node(arr[0]);
         Stack<Pair> st = new Stack<>();
-        st.push(new Pair(root, 0));
         int idx = 0;
+        st.push(new Pair(root, 0));
         while (st.size() > 0) {
             Pair p = st.peek();
-
-            if (p.state == 0) {// left child processing
+            if (p.state == 0) {
                 idx++;
-
-                if (arr[idx] != null) {
-                    Node nn = new Node(arr[idx]);
-                    p.node.left = nn;
-                    st.push(new Pair(nn, 0));
-                }
-
-                p.state++;
-
-            } else if (p.state == 1) {// right child processing
+                Node nn = new Node(arr[idx]);
+                p.node.left = nn;
+                st.push(new Pair(nn, 0));
+            } else if (p.state == 1) {
                 idx++;
-                if (arr[idx] != null) {
-                    Node nn = new Node(arr[idx]);
-                    p.node.right = nn;
-                    st.push(new Pair(nn, 0));
-                }
-                p.state++;
+                Node nn = new Node(arr[idx]);
+                p.node.right = nn;
+                st.push(new Pair(nn, 0));
 
-            } else {// pop
+            } else {
                 st.pop();
-
             }
         }
         return root;
+
     }
 
     public static void display(Node root) {
@@ -472,125 +464,115 @@ public class binarytree {
 
     }
 
-    public static boolean isBST1(Node node)
-    {
-        //timme complexity->0(n*n)
-        if(node ==null) return true;
+    public static boolean isBST1(Node node) {
+        // timme complexity->0(n*n)
+        if (node == null)
+            return true;
 
+        // self check
+        int lmax = max(node.left);
+        int rmin = min(node.right);
+        if (lmax > node.data || rmin < node.data)
+            return false;
 
-        //self check
-        int lmax=max(node.left);
-        int rmin=min(node.right);
-        if(lmax>node.data || rmin<node.data)
-         return false;
-
-
-        //left check and right check
+        // left check and right check
         return isBST1(node.left) && isBST1(node.right);
     }
 
-    public static class BSTPair{
+    public static class BSTPair {
         int min;
         int max;
         boolean isbst;
         int size;
 
-        BSTPair()
-        {
-            min=Integer.MAX_VALUE;
-            max=Integer.MIN_VALUE;
-            isbst=true;
-            size=0;
+        BSTPair() {
+            min = Integer.MAX_VALUE;
+            max = Integer.MIN_VALUE;
+            isbst = true;
+            size = 0;
         }
     }
 
-    public static BSTPair isBST2(Node node)
-    {
-        if(node==null)   
-          return new BSTPair();
-        BSTPair lres=isBST2(node.left);
-        BSTPair rres=isBST2(node.right);
+    public static BSTPair isBST2(Node node) {
+        if (node == null)
+            return new BSTPair();
+        BSTPair lres = isBST2(node.left);
+        BSTPair rres = isBST2(node.right);
 
-        boolean status=(lres.max<node.data && rres.min>node.data);
-        BSTPair mres=new BSTPair();
-        mres.min=Math.min(node.data, Math.min(lres.min, rres.min));
-        mres.max=Math.max(node.data, Math.max(lres.max, rres.max));
-        mres.isbst=lres.isbst && rres.isbst && status;
+        boolean status = (lres.max < node.data && rres.min > node.data);
+        BSTPair mres = new BSTPair();
+        mres.min = Math.min(node.data, Math.min(lres.min, rres.min));
+        mres.max = Math.max(node.data, Math.max(lres.max, rres.max));
+        mres.isbst = lres.isbst && rres.isbst && status;
         return mres;
 
     }
 
-    public static boolean isbalancedbst(Node node)
-    {
-        if(node==null)
-         return true;
+    public static boolean isbalancedbst(Node node) {
+        if (node == null)
+            return true;
 
-         int lch=height(node.left);
-         int rch=height(node.right);
+        int lch = height(node.left);
+        int rch = height(node.right);
 
-         int diff=lch-rch;
-         if((diff==-1 || diff==0 || diff==1) && isbalancedbst(node.left) && isbalancedbst(node.right) )
-          return true;
+        int diff = lch - rch;
+        if ((diff == -1 || diff == 0 || diff == 1) && isbalancedbst(node.left) && isbalancedbst(node.right))
+            return true;
 
-          return false;
+        return false;
     }
 
-    public static class BPair
-    {
+    public static class BPair {
         int ht;
         boolean isBalance;
 
-        BPair()
-        {
-            this.ht=-1;
-            this.isBalance=true;
+        BPair() {
+            this.ht = -1;
+            this.isBalance = true;
         }
-
 
     }
 
-    public static BPair isBalanced(Node node)
-    {
-        if(node==null)  return new BPair();
+    public static BPair isBalanced(Node node) {
+        if (node == null)
+            return new BPair();
 
-        BPair lres=isBalanced(node.left);
-        BPair rres=isBalanced(node.right);
+        BPair lres = isBalanced(node.left);
+        BPair rres = isBalanced(node.right);
 
-        BPair mres=new BPair();
-        mres.ht=Math.max(lres.ht, rres.ht)+1;
+        BPair mres = new BPair();
+        mres.ht = Math.max(lres.ht, rres.ht) + 1;
 
-        boolean factor=Math.abs(lres.ht-rres.ht)<=1;
+        boolean factor = Math.abs(lres.ht - rres.ht) <= 1;
 
-        mres.isBalance= factor && lres.isBalance && rres.isBalance ;
+        mres.isBalance = factor && lres.isBalance && rres.isBalance;
 
         return mres;
     }
 
-    static int sz=0;
-    static Node bstNode=null;
+    static int sz = 0;
+    static Node bstNode = null;
 
-    public static BSTPair largestBST(Node node)
-    {
-        if(node==null)
-         return new BSTPair();
+    public static BSTPair largestBST(Node node) {
+        if (node == null)
+            return new BSTPair();
 
-         BSTPair lres=largestBST(node.left);
-         BSTPair rres=largestBST(node.right);
+        BSTPair lres = largestBST(node.left);
+        BSTPair rres = largestBST(node.right);
 
-         boolean status=(lres.max<node.data && rres.min>node.data);
-         BSTPair mres=new BSTPair();
-         mres.min=Math.min(node.data, Math.min(lres.min, rres.min));
-         mres.max=Math.max(node.data, Math.max(lres.max, rres.max));
-         mres.isbst=lres.isbst && rres.isbst && status;
-         mres.size=lres.size+rres.size+1;
+        boolean status = (lres.max < node.data && rres.min > node.data);
+        BSTPair mres = new BSTPair();
+        mres.min = Math.min(node.data, Math.min(lres.min, rres.min));
+        mres.max = Math.max(node.data, Math.max(lres.max, rres.max));
+        mres.isbst = lres.isbst && rres.isbst && status;
+        mres.size = lres.size + rres.size + 1;
 
-         if(mres.isbst==true && mres.size>sz)
-         {
-            bstNode=node;
-            sz=mres.size;
+        if (mres.isbst == true && mres.size > sz) {
+            bstNode = node;
+            sz = mres.size;
 
-         }
-         return mres;
+        }
+        return mres;
     }
 
     public static void fun() {

@@ -20,26 +20,29 @@ public class practice {
     }
 
     public static Node construct(Integer[] arr) {
-        Node root = new Node();
-        Stack<Node> st = new Stack<>();
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i] != null) {
-                Node nn = new Node(arr[i]);
-                if (st.size() == 0) {
+       Node root=new Node();
+       Stack<Node>st=new Stack<>();
+       for(int i=0;i<arr.length;i++)
+       {
+           if(arr[i]!=null)
+           {
+               Node nn=new Node(arr[i]);
+               if(st.size()==0)
+               {
+                   st.push(nn);
+                   root=nn;
+               }
+               else
+               {
+                   st.peek().children.add(nn);
+                   st.push(nn);
+               }
 
-                    root = nn;
-                    st.push(nn);
-                } else {
-                    st.peek().children.add(nn);
-                    st.push(nn);
-                }
-
-            } else {
-                st.pop();
-
-            }
-        }
-        return root;
+           }
+           else
+           st.pop();
+       }
+       return root;
 
     }
 
