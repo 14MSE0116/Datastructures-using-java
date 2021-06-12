@@ -2,9 +2,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Stack;
 
-import javax.lang.model.util.ElementScanner14;
 
-import jdk.tools.jlink.resources.plugins;
+
 
 public class bst {
 
@@ -131,7 +130,7 @@ public class bst {
   }
 
   public static Node add(Node node, int data) {
-    // write your code here
+    // write your code here 
     if (node == null) {
       Node nn = new Node(data, null, null);
       return nn;

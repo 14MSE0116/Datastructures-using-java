@@ -76,7 +76,7 @@ public class usage {
         }
     
         public int remove() {
-          // write your code here
+          // write your code here                                                                      
           if(this.size()==0)
            {
                System.out.println("Underflow");

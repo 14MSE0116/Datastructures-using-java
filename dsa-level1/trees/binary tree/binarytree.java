@@ -436,15 +436,20 @@ public class binarytree {
 
     public static Node removeLeaves(Node node) {
         // write your code here
-        if (node == null)
-            return null;
-        if (node.left == null && node.right == null) {
-            node = null;
-        }
-        removeLeaves(node.left);
-        removeLeaves(node.right);
-
-        return node;
+        if(node==null)
+        return null;
+        
+        if(node.left==null && node.right==null)
+         return null;
+         
+         Node lcn=removeLeaves(node.left);
+         
+         Node rcn=removeLeaves(node.right);
+         
+         node.left=lcn;
+         node.right=rcn;
+         
+         return node;
     }
 
     static int tilt = 0;
