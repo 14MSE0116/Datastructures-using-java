@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch practicebtree",
+            "request": "launch",
+            "mainClass": "practicebtree",
+            "projectName": "trees_f10716c0"
+        },
+        {
+            "type": "java",
             "name": "Launch gtree",
             "request": "launch",
             "mainClass": "gtree",
