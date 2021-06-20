@@ -41,6 +41,7 @@ public class perfectFriend {
         // return count;
 
         //method 2;
+        int count=0;
         int sum=comps.get(comps.size()-1).size();
         for(int i=comps.size()-2;i>=0;i--)
         {

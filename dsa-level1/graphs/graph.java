@@ -630,7 +630,7 @@ public class graph {
 
         ArrayList<Edge> graph[] = createGraph();
         // display(graph);
-        // boolean vis[] = new boolean[7];
+        boolean vis[] = new boolean[7];
         // // System.out.println(hasPath(graph, 0, 6, vis));
         // // printAllPaths(graph, 0, 6, vis, "");
         // // printAllPathswithsum(graph, 0, 6, vis, "", 0);
@@ -645,6 +645,7 @@ public class graph {
         // hamiltonian(graph, 0, 0, vis, "");
         // dijikstras(graph, 0);
         Prims(graph);
+        dfss(graph, 0, vis);
     }
 
     public static void main(String[] args) {
