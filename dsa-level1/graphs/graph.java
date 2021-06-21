@@ -1,8 +1,6 @@
 import java.io.*;
 import java.util.*;
 
-import org.graalvm.compiler.lir.gen.PhiResolver;
-
 public class graph {
     public static class Edge {
         int src;
@@ -626,6 +624,72 @@ public class graph {
 
     }
 
+    static Stack<Integer> st = new Stack<>();
+
+    public static void topologicalsort(ArrayList<Edge>[] graph) {
+        boolean vis[] = new boolean[graph.length];
+        for (int i = 0; i < graph.length; i++) {
+            if (vis[i] != true) {
+                dfs(graph, i, vis);
+            }
+        }
+
+        while (st.size() > 0) {
+            System.out.println(st.pop());
+        }
+    }
+
+    public static void dfs(ArrayList<Edge>[] graph, int src, boolean vis[]) {
+        vis[src] = true;
+        for (Edge e : graph[src]) {
+            if (vis[e.nbr] != true) {
+                dfs(graph, e.nbr, vis);
+            }
+        }
+
+        st.push(src);
+
+    }
+
+    public static class IterPair {
+        int vtx;
+        String psf;
+
+        IterPair(int vtx, String psf) {
+            this.vtx = vtx;
+            this.psf = psf;
+        }
+    }
+
+    public static void IterDFS(ArrayList<Edge>[] graph, int src) {
+        Stack<IterPair> iterst = new Stack<>();
+        iterst.add(new IterPair(src, src + ""));
+        boolean vis[] = new boolean[graph.length];
+        while (iterst.size() > 0) {
+            // 1.remove
+            IterPair rem = iterst.pop();
+
+            // 2.mark
+            if (vis[rem.vtx] == true)
+                continue;
+            else
+                vis[rem.vtx] = true;
+
+            // 3work
+            System.out.println(rem.vtx + "@" + rem.psf);
+
+            // 4,add neighbours;
+            for (Edge e : graph[rem.vtx]) {
+                if (vis[e.nbr] != true) {
+                    iterst.add(new IterPair(e.nbr, rem.psf + e.nbr));
+                }
+
+            }
+
+        }
+
+    }
+
     public static void fun() {
 
         ArrayList<Edge> graph[] = createGraph();
@@ -645,7 +709,6 @@ public class graph {
         // hamiltonian(graph, 0, 0, vis, "");
         // dijikstras(graph, 0);
         Prims(graph);
-        dfss(graph, 0, vis);
     }
 
     public static void main(String[] args) {
