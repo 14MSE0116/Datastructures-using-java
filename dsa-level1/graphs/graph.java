@@ -690,6 +690,101 @@ public class graph {
 
     }
 
+    public static boolean dfsCycle(ArrayList<ArrayList<Integer>> graph, int src, boolean vis[], boolean dfsvis[]) {
+
+        vis[src] = true;
+        dfsvis[src] = true;
+        for (int nbr : graph.get(src)) {
+            if (vis[nbr] != true) {
+                boolean res = dfsCycle(graph, nbr, vis, dfsvis);
+                if (res == true)
+                    return true;
+            } else if (dfsvis[nbr] == true)
+                return true;
+        }
+        dfsvis[src] = false;
+        return false;
+    }
+
+    public static boolean isCyclic(int n, ArrayList<ArrayList<Integer>> graph) {
+        boolean vis[] = new boolean[n];
+        boolean dfsvis[] = new boolean[n];
+        for (int v = 0; v < n; v++) {
+            if (vis[v] != true) {
+                boolean res = dfsCycle(graph, v, vis, dfsvis);
+                if (res == true)
+                    return true;
+            }
+        }
+        return false;
+
+    }
+
+    public static class OPair {
+        int x;
+        int y;
+        int t;
+
+        OPair(int x, int y, int t) {
+            this.x = x;
+            this.y = y;
+            this.t = t;
+        }
+    }
+
+    public static int orangesRotting(int[][] graph) {
+        // 1.make a queue and add rotted orang in it with time t=0
+        // as well as maintain count of fresh + rotted oranges for final result
+        Queue<OPair> qu = new ArrayDeque<>();
+        int orange = 0;
+        for (int i = 0; i < graph.length; i++) {
+            for (int j = 0; j < graph[i].length; j++) {
+                if (graph[i][j] == 2) {
+                    qu.add(new OPair(i, j, 0));
+                    orange++;
+                } else if (graph[i][j] == 1) {
+                    orange++;
+                }
+            }
+        }
+
+        if (orange == 0)
+            return 0;
+
+        // 2.Process BFS and find max time->marking as -1;
+        int time = -1;
+        int xdir[] = { -1, 0, 1, 0 };
+        int ydir[] = { 0, -1, 0, 1 };
+        while (qu.size() > 0) {
+            int size = qu.size();
+            while (size-- > 0) {
+                OPair rem = qu.remove();
+
+                if (graph[rem.x][rem.y] == -1)
+                    continue;
+
+                graph[rem.x][rem.y] = -1;
+                time = rem.t;
+
+                // System.out.println("orangge at (" + rem.x + "," + rem.y + ")" + "rotted at
+                // time" + rem.t);
+                orange--;
+                for (int d = 0; d < xdir.length; d++) {
+                    int r = rem.x + xdir[d];
+                    int c = rem.y + ydir[d];
+
+                    // check validity + unvisited orange
+                    if (r >= 0 && r < graph.length && c >= 0 && c < graph[0].length && graph[r][c] != -1
+                            && graph[r][c] == 1) {
+                        qu.add(new OPair(r, c, rem.t + 1));
+                    }
+                }
+
+            }
+        }
+        return orange > 0 ? -1 : time;
+    }
+
     public static void fun() {
 
         ArrayList<Edge> graph[] = createGraph();
