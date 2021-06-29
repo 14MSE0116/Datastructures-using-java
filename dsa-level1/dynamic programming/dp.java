@@ -1,6 +1,9 @@
+
 /**
  * dp
  */
+import java.util.*;
+
 public class dp {
 
     public static int fib_rec(int n, int[] dp) {
@@ -353,50 +356,51 @@ public class dp {
         return dp[x][y] = cost + mine[x][y];
     }
 
-    public static int goldminen_tab(int[][] mine, int x, int y, int[][] dp) {
-        int res = 0;
-        for (y = mine[0].length - 1; y >= 0; y--) {
-            for (x = 0; x < mine.length; x++) {
-                if (y == mine[0].length - 1) {
-                    dp[x][y] = mine[x][y];
-                } else if (x == 0) {
-                    dp[x][y] = Math.min(dp[x][y + 1], dp[x + 1][y + 1]) + mine[x][y];
-                } else if (x == mine.length - 1) {
-                    dp[x][y] = Math.min(dp[x][y + 1], dp[x - 1][y + 1]) + mine[x][y];
-                } else {
-                    dp[x][y] = Math.min(Math.max(dp[x][y + 1], dp[x - 1][y + 1]), dp[x + 1][y + 1]) + mine[x][y];
-                }
-                res = Math.max(res, dp[x][y]);
-            }
-        }
-        return res;
-    }
-
-    public static int goldminen_tab2(int[][] mine, int x, int y, int[][] dp) {
+    public static int goldmine_tab1(int mine[][], int x, int y, int dp[][]) {
         int profit = 0;
         for (y = mine[0].length - 1; y >= 0; y--) {
             for (x = 0; x < mine.length; x++) {
                 if (y == mine[0].length - 1) {
                     dp[x][y] = mine[x][y];
-                    profit = Math.max(profit, dp[x][y]);
-                    continue;
                 }
 
+                else if (x == 0) {
+                    dp[x][y] = Math.max(dp[x][y + 1], dp[x + 1][y + 1]) + mine[x][y];
+                }
+
+                else if (x == mine.length - 1) {
+                    dp[x][y] = Math.max(dp[x - 1][y + 1], dp[x][y + 1]) + mine[x][y];
+                }
+
+                else {
+                    dp[x][y] = Math.max(dp[x - 1][y + 1], Math.max(dp[x][y + 1], dp[x + 1][y + 1])) + mine[x][y];
+                }
+                profit = Math.max(profit, dp[x][y]);
+            }
+        }
+        return profit;
+    }
+
+    public static int goldmine_tab2(int mine[][], int x, int y, int dp[][]) {
+        int profit = 0;
+        for (y = mine[0].length - 1; y >= 0; y--) {
+            for (x = 0; x < mine.length; x++) {
+                if (y == mine[0].length - 1) {
+                    dp[x][y] = mine[x][y];
+                    continue;
+                }
                 int cost = 0;
-                // top-right
                 if (x - 1 >= 0 && y + 1 < mine[0].length) {
                     cost = Math.max(cost, dp[x - 1][y + 1]);
                 }
 
-                // right
                 if (y + 1 < mine[0].length) {
                     cost = Math.max(cost, dp[x][y + 1]);
                 }
-
-                // down-right
                 if (x + 1 < mine.length && y + 1 < mine[0].length) {
                     cost = Math.max(cost, dp[x + 1][y + 1]);
                 }
+
                 dp[x][y] = cost + mine[x][y];
                 profit = Math.max(profit, dp[x][y]);
             }
@@ -454,29 +458,47 @@ public class dp {
         return dp[idx][target] = res;
     }
 
+    public static boolean targetsubset_memo(int arr[], int idx, int tar, boolean dp[][]) {
+        if (idx == arr.length) {
+            if (tar == 0)
+                return dp[idx][tar] = true;
+
+            return dp[idx][tar] = false;
+        }
+
+        if (dp[idx][tar] != false)
+            return dp[idx][tar];
+
+        boolean res = false;
+        if (tar - arr[idx] >= 0) {
+            res = res || targetsubset_memo(arr, idx + 1, tar - arr[idx], dp);
+        }
+        res = res || targetsubset_memo(arr, idx + 1, tar, dp);
+
+        return dp[idx][tar] = res;
+    }
+
     public static boolean targetsumsubset_tab1(int arr[], int target) {
-        boolean dp[][] = new boolean[arr.length + 1][target + 1];
+        boolean[][] dp = new boolean[arr.length + 1][target + 1];
 
-        for (int idx = 0; idx < dp.length; idx++) {
-            for (int tar = 0; tar < dp[0].length; tar++) {
-                if (tar == 0) {
-                    dp[idx][tar] = true;
-                } else if (idx == 0) {
-                    dp[idx][tar] = false;
+        for (int indx = 0; indx < dp.length; indx++) {
+            for (int targ = 0; targ < dp[0].length; targ++) {
+                if (targ == 0) {
+                    dp[indx][targ] = true;
+                } else if (indx == 0) {
+                    dp[indx][targ] = false;
                 } else {
-                    int val = arr[idx - 1];
-                    if (tar < val) {
+                    int val = arr[indx - 1];
+                    if (targ < val) {
                         // only no call
-                        dp[idx][tar] = dp[idx - 1][tar];
+                        dp[indx][targ] = dp[indx - 1][targ];
                     } else {
-                        // yes call OR{||} no call
-                        dp[idx][tar] = dp[idx - 1][tar] || dp[idx - 1][tar - val];
-
+                        // no call OR(||) yes call
+                        dp[indx][targ] = dp[indx - 1][targ] || dp[indx - 1][targ - val];
                     }
                 }
             }
         }
-
         return dp[dp.length - 1][dp[0].length - 1];
     }
 
@@ -506,6 +528,201 @@ public class dp {
         }
 
         return dp[0][target];
+    }
+
+    // ~~~~~~~~~~~~~~~~Coin Change~~~~~~~~~~~~~~~~~~
+    public static int coinChange_perm_rec(int[] coins, int target, String psf) {
+        if (target == 0) {
+            System.out.println(psf);
+            return 1;
+        }
+        int count = 0;
+        for (int coin : coins) {
+            if (target - coin >= 0)
+                count += coinChange_perm_rec(coins, target - coin, psf + coin + " ");
+        }
+        return count;
+    }
+
+    public static int coinChange_perm_memo(int[] coins, int target, int dp[]) {
+        if (target == 0) {
+            dp[target] = 1;
+        }
+        if (dp[target] != 0)
+            return dp[target];
+
+        int count = 0;
+        for (int coin : coins) {
+            if (target - coin >= 0)
+                count += coinChange_perm_memo(coins, target - coin, dp);
+        }
+        return dp[target] = count;
+    }
+
+    public static int coinChangeTab1(int coins[], int tar, int dp[]) {
+        dp[0] = 1;
+        for (int i = 1; i <= tar; i++) {
+            int count = 0;
+            for (int coin : coins) {
+                if (i - coin >= 0)
+                    dp[i] += dp[i - coin];
+            }
+        }
+        return dp[tar];
+    }
+
+    // `````````````````````combination coinchange````````````
+    public static int coinChange_comb(int[] coins, int idx, int tar, int dp[][]) {
+        if (tar == 0)
+            return dp[idx][tar] = 1;
+
+        if (idx == coins.length) {
+            return dp[idx][tar] = 0;
+        }
+
+        if (dp[idx][tar] != 0)
+            return dp[idx][tar];
+
+        int count = 0;
+
+        if (tar - coins[idx] >= 0)
+            count += coinChange_comb(coins, idx, tar - coins[idx], dp);
+
+        count += coinChange_comb(coins, idx + 1, tar, dp);
+
+        return dp[idx][tar] = count;
+    }
+
+    // ````````````````knapsack````````````
+
+    public static int knapsack01_rec(int wts[], int values[], int idx, int cap) {
+
+        if (idx == -1)
+            return 0;
+
+        int v1 = 0;
+        // yes call
+        if (cap - wts[idx] >= 0) {
+            v1 = knapsack01_rec(wts, values, idx - 1, cap - wts[idx]) + values[idx];
+        }
+
+        // no call
+        int v2 = knapsack01_rec(wts, values, idx - 1, cap - wts[idx]);
+
+        return Math.max(v1, v2);
+    }
+
+    public static int knapsack01_memo(int wts[], int values[], int idx, int cap, int dp[][]) {
+
+        if (idx == -1)
+            return dp[idx + 1][cap] = 0;
+
+        int v1 = 0;
+        // yes call
+        if (cap - wts[idx] >= 0) {
+            v1 = knapsack01_rec(wts, values, idx - 1, cap - wts[idx]) + values[idx];
+        }
+
+        // no call
+        int v2 = knapsack01_rec(wts, values, idx - 1, cap - wts[idx]);
+
+        return Math.max(v1, v2);
+    }
+
+    public static int knapsack01_tab(int[] wts, int[] vals, int idx, int Cap, int[][] dp) {
+        for (idx = 1; idx <= vals.length; idx++) {
+            for (int cap = 1; cap <= Cap; cap++) {
+                if (cap < wts[idx - 1]) {
+                    dp[idx][cap] = dp[idx - 1][cap];
+                } else {
+                    // yes call
+                    int v1 = dp[idx - 1][cap - wts[idx - 1]] + vals[idx - 1];
+
+                    // no call
+                    int v2 = dp[idx - 1][cap];
+                    dp[idx][cap] = Math.max(v1, v2);
+                }
+            }
+        }
+        return dp[wts.length][Cap];
+    }
+
+    // ``````````Unbounded knapsack111111
+    public static int unbounknapsack(int[] wts, int values[], int idx, int Cap) {
+        if (Cap == 0 || idx == -1)
+            return 0;
+
+        int v1 = 0;
+
+        if (Cap - wts[idx] >= 0)
+            v1 = unbounknapsack(wts, values, idx, Cap - wts[idx]) + values[idx];
+
+        int v2 = unbounknapsack(wts, values, idx - 1, Cap);
+
+        return Math.max(v1, v2);
+    }
+
+    // memoisation
+    public static int unbounknapsack_memo(int[] wts, int values[], int idx, int Cap, int dp[][]) {
+        if (Cap == 0 || idx == -1)
+            return dp[idx + 1][Cap] = 0;
+
+        if (dp[idx + 1][Cap] != 0)
+            return dp[idx + 1][Cap];
+
+        int v1 = 0;
+
+        if (Cap - wts[idx] >= 0)
+            v1 = unbounknapsack_memo(wts, values, idx, Cap - wts[idx], dp) + values[idx];
+
+        int v2 = unbounknapsack_memo(wts, values, idx - 1, Cap, dp);
+
+        return dp[idx + 1][Cap] = Math.max(v1, v2);
+    }
+
+    // `````````````````fractional knapsack`````````
+    public static double fp(int wts[], int vals[], int cap) {
+        PriorityQueue<Pair> pq = new PriorityQueue<>(Collections.reverseOrder());
+        for (int i = 0; i < vals.length; i++) {
+            pq.add(new Pair(vals[i], wts[i]));
+        }
+        double profit = 0;
+
+        while (pq.size() > 0 && cap > 0) {
+            Pair rem = pq.remove();
+
+            if (rem.wt <= cap) {
+                profit += rem.val;
+                cap -= rem.wt;
+            } else {
+                profit += rem.frac * cap;
+                cap = 0;
+            }
+        }
+        return profit;
+    }
+
+    public static class Pair implements Comparable<Pair> {
+        int val;
+        double wt;
+        double frac;
+
+        Pair(int val, double wt) {
+            this.val = val;
+            this.wt = wt;
+            this.frac = this.val / this.wt;
+        }
+
+        public int compareTo(Pair p) {
+            if (this.frac > p.frac)
+                return 1;
+
+            else if (this.frac < p.frac)
+                return -1;
+
+            else
+                return 0;
+        }
     }
 
     public static void ques() {
