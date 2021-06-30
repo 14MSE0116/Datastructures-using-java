@@ -725,6 +725,146 @@ public class dp {
         }
     }
 
+    // ```````````````Count Binary String with no two consequctive
+    // o's`````````````````
+    public static int countbinarystrings(int n, int le, String asf) {
+        if (n == 0)
+            return 1;
+        // check is to prevent repetition of consecutive zeros
+        int count = 0;
+        if (le == 1)
+            count += countbinarystrings(n - 1, 0, asf + "0 ");
+
+        count += countbinarystrings(n - 1, 1, asf + "1 ");
+        return count;
+
+    }
+
+    public static int countbinarystringsmemo(int n, int le, int[][] dp) {
+        if (n == 0) {
+            return dp[n][le] = 1;
+        }
+
+        if (dp[n][le] != 0)
+            return dp[n][le];
+
+        // check is to prevent repetition of consecutive zeros
+        int count = 0;
+        if (le == 1)
+            count += countbinarystringsmemo(n - 1, 0, dp);
+
+        count += countbinarystringsmemo(n - 1, 1, dp);
+        return dp[n][le] = count;
+    }
+
+    public static int countbinarystringstab(int N) {
+        int[][] dp = new int[N][2];
+
+        dp[0][0] = 1;
+        dp[0][1] = 1;
+
+        for (int n = 1; n < N; n++) {
+            dp[n][0] = dp[n - 1][1];
+            dp[n][1] = dp[n - 1][0] + dp[n - 1][1];
+        }
+        return dp[N - 1][0] + dp[N - 1][1];
+    }
+
+    public static int countbinarystringsopti(int n) {
+        int one = 1;
+        int zero = 1;
+        for (int i = 2; i <= n; i++) {
+            int n_zero = one;
+            int n_one = one + zero;
+
+            zero = n_zero;
+            one = n_one;
+        }
+        return one + zero;
+    }
+
+    // ``````````count encoding````````
+    public static int countencodings(String s, int idx) {
+        if (idx == s.length())
+            return 1;
+
+        if (s.charAt(idx) == '0') {
+            return 0;
+        }
+
+        int count = 0;
+        int n1 = s.charAt(idx) - '0';
+        count += countencodings(s, idx + 1);
+
+        if (idx + 1 < s.length()) {
+            int n = s.charAt(idx + 1) - '0';
+            int n2 = n1 * 10 + n;
+            if (n2 <= 26) {
+                count += countencodings(s, idx + 2);
+            }
+
+        }
+        return count;
+
+    }
+
+    public static int countencodings_memo(String s, int idx, int dp[]) {
+        if (idx == s.length())
+            return dp[idx] = 1;
+
+        if (s.charAt(idx) == '0') {
+            return dp[idx] = 0;
+        }
+
+        if (dp[idx] != 0)
+            return dp[idx];
+
+        int count = 0;
+        int n1 = s.charAt(idx) - '0';
+        count += countencodings_memo(s, idx + 1, dp);
+
+        if (idx + 1 < s.length()) {
+            int n = s.charAt(idx + 1) - '0';
+            int n2 = n1 * 10 + n;
+            if (n2 <= 26) {
+                count += countencodings_memo(s, idx + 2, dp);
+            }
+
+        }
+        return dp[idx] = count;
+
+    }
+
+    public static int countencodings_memo(String s) {
+        int dp[] = new int[s.length() + 1];
+        for (int idx = s.length(); idx >= 0; idx--) {
+            if (idx == s.length()) {
+                dp[idx] = 1;
+                continue;
+            }
+
+            if (s.charAt(idx) == '0') {
+                dp[idx] = 0;
+                continue;
+            }
+
+            int count = 0;
+
+            int n1 = s.charAt(idx) - '0';
+            count += dp[idx + 1];
+
+            if (idx + 1 < s.length()) {
+                int n = s.charAt(idx + 1) - '0';
+                int n2 = n1 * 10 + n;
+                if (n2 <= 26) {
+                    count += dp[idx + 2];
+                }
+            }
+            dp[idx] = count;
+        }
+        return dp[0];
+    }
+
     public static void ques() {
         mazepath();
         // climbStair();
