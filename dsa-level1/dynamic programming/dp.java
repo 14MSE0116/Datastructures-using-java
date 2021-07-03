@@ -4,6 +4,8 @@
  */
 import java.util.*;
 
+import org.graalvm.compiler.replacements.IntrinsicGraphBuilder;
+
 public class dp {
 
     public static int fib_rec(int n, int[] dp) {
@@ -863,6 +865,182 @@ public class dp {
             dp[idx] = count;
         }
         return dp[0];
+    }
+
+    // ````````count subseq a+b+c`````````````
+    public static int countsubseqabc(String s) {
+        int c_a = 0;
+        int c_b = 0;
+        int c_c = 0;
+
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == 'a') {
+                c_a = 2 * c_a + 1;
+            } else if (s.charAt(i) == 'b') {
+                c_b = c_a + (2 * c_b);
+            } else {
+                c_c = c_b + (2 * c_c);
+            }
+        }
+        return c_c;
+    }
+
+    // ```````````MAX SUM OF NON adjacent subseq````````
+    public static int maxsumNonadj_rec(int arr[], int idx, int status) {
+        if (idx == -1)
+            return 0;
+
+        int maxSum = (int) -1e9;
+
+        // include
+        if (status == 0)
+            maxSum = Math.max(maxSum, maxsumNonadj_rec(arr, idx - 1, 1)) + arr[idx];
+
+        // exclude
+        maxSum = Math.max(maxSum, maxsumNonadj_rec(arr, idx - 1, 0));
+
+        return maxSum;
+    }
+
+    public static int maxsumNonadj_memo(int arr[], int idx, int status, int dp[][]) {
+        if (idx == -1)
+            return dp[status][idx + 1] = 0;
+
+        if (dp[status][idx + 1] != 0)
+            return dp[status][idx + 1];
+
+        int maxSum = (int) -1e9;
+
+        // include
+        if (status == 0)
+            maxSum = Math.max(maxSum, maxsumNonadj_memo(arr, idx - 1, 1, dp)) + arr[idx];
+
+        // exclude
+        maxSum = Math.max(maxSum, maxsumNonadj_memo(arr, idx - 1, 0, dp));
+
+        return dp[status][idx + 1] = maxSum;
+    }
+
+    public static int maxsumNonadj_tab_greedy(int arr[]) {
+        int include = 0;
+        int exclude = 0;
+        for (int i = 0; i < arr.length; i++) {
+            int n_include = exclude + arr[i];
+            int n_exclude = Math.max(include, exclude);
+
+            include = n_include;
+            exclude = n_exclude;
+        }
+        return Math.max(include, exclude);
+    }
+
+    // ```````````Paint House```````````
+
+    public static int paintHouse(int[][] cost) {
+        int red = 0;
+        int blue = 0;
+        int green = 0;
+        for (int i = 0; i < cost.length; i++) {
+            // red->idx =0
+            int n_red = Math.min(green, blue) + cost[i][0];
+
+            // green idx=1
+            int n_green = Math.min(blue, red) + cost[i][1];
+
+            // blue idx=2
+            int n_blue = Math.min(red, green) + cost[i][2];
+
+            red = n_red;
+            green = n_green;
+            blue = n_blue;
+
+        }
+        return Math.min(red, Math.min(green, blue));
+
+    }
+
+    public static int paintHouseManyColors(int cost[][]) {
+        int n = cost.length;
+        int k = cost[0].length;
+        int[][] dp = new int[n][k];
+        int min = (int) 1e9;
+        int smin = (int) 1e9;
+        for (int i = 0; i < n; i++) {
+            int nmin = (int) 1e9;
+            int nsmin = (int) 1e9;
+            for (int j = 0; j < k; j++) {
+                if (i == 0) {
+                    // you are first row
+                    dp[i][j] = cost[i][j];
+                } else {
+                    if (dp[i - 1][j] != min) {
+                        dp[i][j] = cost[i][j] + min;
+                    } else {
+                        dp[i][j] = cost[i][j] + smin;
+                    }
+                }
+                if (dp[i][j] <= nmin) {
+                    nsmin = nmin;
+                    nmin = dp[i][j];
+                } else if (dp[i][j] < nsmin) {
+                    nsmin = dp[i][j];
+                }
+            }
+            min = nmin;
+            smin = nsmin;
+        }
+        return min;
+    }
+
+    public static long paintFence(int n, int k) {
+        long same = 0;
+        long distinct = k;
+        for (int i = 1; i < n; i++) {
+            long n_same = distinct;
+            long n_distinct = (same + distinct) * (k - 1);
+
+            same = n_same;
+            distinct = n_distinct;
+        }
+        return same + distinct;
+    }
+
+    // ``````````Tiling Queston```````
+    public static long tiling2x1(int n) {
+        long a = 1;
+        long b = 2;
+
+        for (int i = 1; i < n; i++) {
+            long c = a + b;
+            a = b;
+            b = c;
+        }
+        return a;
+    }
+
+    public static void tilingmx1(int n, int m) {
+        int dp[] = new int[n + 1];
+        for (int i = 1; i <= n; i++) {
+            if (i < m) {
+                dp[i] = 1;
+            } else if (i == m)
+                dp[i] = 2;
+            else {
+                dp[i] = dp[i - 1] + dp[i - m];
+            }
+        }
+        System.out.println(dp[n]);
+    }
+
+    // ````````````Friends Pair````````````````
+    public static void friendpairing(int n) {
+        int dp[] = new int[n + 1];
+        dp[0] = 1;
+        dp[1] = 1;
+        for (int i = 2; i <= n; i++) {
+            dp[i] = dp[i - 1] + (i - 1) * dp[i - 2];
+        }
+        System.out.println(dp[n]);
     }
 
     public static void ques() {
