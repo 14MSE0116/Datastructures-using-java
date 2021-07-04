@@ -1043,6 +1043,71 @@ public class dp {
         System.out.println(dp[n]);
     }
 
+    // ```````````````````Partition into K subset``````````````````
+    public static long partitionKsubset(int n, int k) {
+        long dp[][] = new long[n + 1][k + 1];
+
+        for (int i = 0; i <= n; i++) {
+            for (int j = 0; j <= i && j <= k; j++) {
+                if (j == 0) {
+                    dp[i][j] = 0;
+                } else if (i == j) {
+                    dp[i][j] = 1;
+                } else {
+                    dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j] * j;
+                }
+            }
+        }
+        return dp[n][k];
+    }
+
+    // ````````stock buy sell````````````
+    public static int stockbuysellonetrans(int price[]) {
+        int profit = 0;
+        int minPrice = price[0];
+        for (int d = 1; d < price.length; d++) {
+            profit = Math.max(profit, price[d] - minPrice);
+            minPrice = Math.min(minPrice, price[d]);
+        }
+        return profit;
+    }
+
+    // with infinite transactions
+    public static int stockBuysellInfiniteTrasn(int[] price) {
+        int profit = 0;
+        int bd = 0; // buying day
+        int sd = 0; // selling day
+
+        for (int i = 1; i < price.length; i++) {
+            if (price[i - 1] > price[i]) {
+                profit += price[sd] - price[bd];
+
+                bd = i;
+                sd = i;
+            } else {
+                sd = i;
+            }
+        }
+        profit += price[sd] - price[bd];
+        return profit;
+    }
+
+    //with infinite trasactions with fee
+    public static int buysellstockstransactionfeeita(int price[],int fee)
+    {
+        int pwb=-price[0];
+        int pws=0;
+        for(int i=1;i<price.length;i++)
+        {
+            int npwb=Math.max(pwb,pws-price[i]);
+            int npws=Math.max(pws,pwb+price[i]-fee);
+            
+            pwb=npwb;
+            pws=npws;
+        }
+        return pws;
+    }
+
     public static void ques() {
         mazepath();
         // climbStair();
