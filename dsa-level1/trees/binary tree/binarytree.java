@@ -53,7 +53,7 @@ public class binarytree {
                 st.push(new Pair(nn, 0));
 
             } else {
-                st.pop();
+                st.pop();   
             }
         }
         return root;

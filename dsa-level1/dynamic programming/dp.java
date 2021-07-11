@@ -1092,20 +1092,135 @@ public class dp {
         return profit;
     }
 
-    //with infinite trasactions with fee
-    public static int buysellstockstransactionfeeita(int price[],int fee)
-    {
-        int pwb=-price[0];
-        int pws=0;
-        for(int i=1;i<price.length;i++)
-        {
-            int npwb=Math.max(pwb,pws-price[i]);
-            int npws=Math.max(pws,pwb+price[i]-fee);
-            
-            pwb=npwb;
-            pws=npws;
+    // with infinite trasactions with fee
+    public static int buysellstockstransactionfeeita(int price[], int fee) {
+        int pwb = -price[0];
+        int pws = 0;
+        for (int i = 1; i < price.length; i++) {
+            int npwb = Math.max(pwb, pws - price[i]);
+            int npws = Math.max(pws, pwb + price[i] - fee);
+
+            pwb = npwb;
+            pws = npws;
         }
         return pws;
+    }
+
+    // stock with cooldown period and infine trans
+    public static void BuyAndSellStocksWithCooldown(int price[]) {
+        int pwb = -price[0];
+        int pws = 0;
+        int pwc = 0;
+        for (int i = 1; i < price.length; i++) {
+            int npwb = Math.max(pwb, pwc - price[i]);
+            int npws = Math.max(pws, price[i] + pwb);
+            int npwc = Math.max(pwc, pws);
+
+            pwb = npwb;
+            pws = npws;
+            pwc = npwc;
+        }
+        System.out.println(pws);
+    }
+
+    //buy and sell two trans allowed
+    public static int BuyAndSellStocksTwoTransactionsAllowed(int arr[])
+    {
+        int n=arr.length;
+        int minsf=arr[0];
+        int maxpws=0;
+        int dpmaxpws[]=new int[n];
+        for(int i=1;i<n;i++)
+        {
+            if(arr[i]<minsf)
+            {
+                minsf=arr[i];
+            }
+            maxpws=arr[i]-minsf;
+            if(maxpws>dpmaxpws[i-1])
+            {
+                dpmaxpws[i]=maxpws;
+            }
+            else
+            {
+                dpmaxpws[i]=dpmaxpws[i-1];
+            }
+            
+        }
+        
+        int maxsf=arr[n-1];
+        int maxpwb=0;
+        int dpmaxpwb[]=new int[n];
+        for(int i=n-2;i>=0;i--)
+        {
+            if(arr[i]>maxsf)
+            {
+                maxsf=arr[i];
+            }
+            maxpwb=maxsf-arr[i];
+            if(maxpwb>dpmaxpwb[i+1])
+            {
+                dpmaxpwb[i]=maxpwb;
+            }
+            else
+            {
+                dpmaxpwb[i]=dpmaxpwb[i+1];
+            }
+        }
+        
+        int ans=0;
+        for(int i=0;i<arr.length;i++)
+        {
+            if(dpmaxpws[i]+dpmaxpwb[i]>ans)
+              ans=dpmaxpws[i]+dpmaxpwb[i];
+        }
+        return ans;
+    }
+
+    // stock with k transactions
+    public static int BuyAndSellStocksKTransactionsAllowed(int arr[], int k) {
+        int dp[][] = new int[k + 1][arr.length];
+        for (int t = 1; t <= k; t++) {
+
+            for (int d = 1; d < arr.length; d++) {
+                int max = dp[t][d - 1];
+
+                for (int pd = 0; pd < d; pd++) {
+                    int pdtm1 = dp[t - 1][pd];
+                    int pth = arr[d] - arr[pd];
+                    if (pdtm1 + pth > max)
+                        max = pdtm1 + pth;
+                }
+
+                dp[t][d] = max;
+            }
+
+        }
+        return dp[k][arr.length - 1];
+    }
+
+    // optimise version
+    public static int BuyAndSellStocksKTransactionsAllowedopti(int arr[], int k) {
+        int dp[][] = new int[k + 1][arr.length];
+        for (int t = 1; t <= k; t++) {
+            int max = Integer.MIN_VALUE;
+
+            for (int d = 1; d < arr.length; d++) {
+
+                if (dp[t - 1][d - 1] - arr[d - 1] > max) {
+                    max = dp[t - 1][d - 1] - arr[d - 1];
+                }
+
+                if (max + arr[d] > dp[t][d - 1]) {
+                    dp[t][d] = max + arr[d];
+                } else {
+                    dp[t][d] = dp[t][d - 1];
+                }
+
+            }
+
+        }
+        return dp[k][arr.length - 1];
     }
 
     public static void ques() {
