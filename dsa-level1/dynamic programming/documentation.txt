@@ -1,0 +1,8 @@
+The entire program is implemented in java
+
+Try to install java compiler and run it.
+
+Compile and  Run co2emission.java 
+
+Give the input accordingly to the scenario's mentioned in the question or
+it would ask you the inputs once u run the above mentioned program.
