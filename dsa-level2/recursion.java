@@ -211,6 +211,181 @@ public class recursion {
         }
     }
 
+    // chess combinaton 1 2D as 1D
+    // qpsf->queen placed so far
+    // lcno->last cell number
+
+    public static void queensCombinations(int qpsf, int tq, boolean[][] chess, int lcno) {
+        // write your code here
+        if (qpsf == tq) {
+            for (int i = 0; i < chess.length; i++) {
+                for (int j = 0; j < chess[0].length; j++) {
+                    if (chess[i][j] == true) {
+                        System.out.print("q\t");
+                    } else {
+                        System.out.print("-\t");
+                    }
+                }
+                System.out.println();
+            }
+            System.out.println();
+            return;
+        }
+
+        for (int b = lcno + 1; b < chess.length * chess[0].length; b++) {
+            int r = b / chess.length;
+            int c = b % chess[0].length;
+
+            // place
+            chess[r][c] = true;
+            queensCombinations(qpsf + 1, tq, chess, b);
+            chess[r][c] = false;
+        }
+    }
+
+    public static boolean IsQueenSafe(boolean[][] chess, int row, int col) {
+        // write your code here
+        for (int r = 1; r <= chess.length; r++) {
+            for (int dir = 0; dir < rdir.length; dir++) {
+                int rr = row + r * rdir[dir];
+                int cc = col + r * cdir[dir];
+                if (rr >= 0 && rr < chess.length && cc >= 0 && cc < chess[0].length) {
+                    if (chess[rr][cc] == true)
+                        return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static void nqueens(int qpsf, int tq, boolean[][] chess, int lcno) {
+        if (qpsf == tq) {
+            for (int row = 0; row < chess.length; row++) {
+                for (int col = 0; col < chess.length; col++) {
+                    System.out.print(chess[row][col] ? "q\t" : "-\t");
+                }
+                System.out.println();
+            }
+            System.out.println();
+            return;
+        }
+
+        for (int i = lcno + 1; i < chess.length * chess.length; i++) {
+            int row = i / chess.length;
+            int col = i % chess.length;
+
+            if (chess[row][col] == false && IsQueenSafe(chess, row, col)) {
+                chess[row][col] = true;
+                nqueens(qpsf + 1, tq, chess, row * chess.length + col);
+                chess[row][col] = false;
+            }
+        }
+    }
+
+    public static void queensPermutations2(int qpsf, int tq, int[][] chess) {
+        if (qpsf == tq) {
+            // print result
+            for (int i = 0; i < chess.length; i++) {
+                for (int j = 0; j < chess[0].length; j++) {
+                    if (chess[i][j] != 0) {
+                        System.out.print("q" + chess[i][j] + "\t");
+                    } else {
+                        System.out.print("-\t");
+                    }
+                }
+                System.out.println();
+            }
+            System.out.println();
+            return;
+        }
+        // write your code here
+        for (int i = 0; i < chess.length; i++) {
+            for (int j = 0; j < chess[0].length; j++) {
+                if (chess[i][j] == 0) {
+                    chess[i][j] = qpsf + 1;
+                    queensPermutations2(qpsf + 1, tq, chess);
+                    chess[i][j] = 0;
+                }
+
+            }
+        }
+    }
+
+    public static void nqueens_permu(int qpsf, int tq, int[][] chess) {
+        // write your code here
+        if (qpsf == tq) {
+            // print result
+            for (int i = 0; i < chess.length; i++) {
+                for (int j = 0; j < chess.length; j++) {
+                    if (chess[i][j] == 0) {
+                        System.out.print("-\t");
+                    } else {
+                        System.out.print("q" + chess[i][j] + "\t");
+                    }
+                }
+                System.out.println();
+            }
+            System.out.println();
+            return;
+        }
+        for (int i = 0; i < chess.length * chess.length; i++) {
+            int row = i / chess.length;
+            int col = i % chess.length;
+            if (chess[row][col] == 0 && IsQueenSafe(chess, row, col)) {
+                chess[row][col] = qpsf + 1;
+                nqueens_permu(qpsf + 1, tq, chess);
+                chess[row][col] = 0;
+            }
+        }
+    }
+
+    public static int rdir[] = { -1, -1, 0, 1, 1, 1, 0, -1 };
+    public static int cdir[] = { 0, 1, 1, 1, 0, 1, -1, -1 };
+
+    public static boolean IsQueenSafe(int[][] chess, int row, int col) {
+        // write your code here
+        for (int r = 1; r <= chess.length; r++) {
+            for (int dir = 0; dir < rdir.length; dir++) {
+                int rr = row + r * rdir[dir];
+                int cc = col + r * cdir[dir];
+                if (rr >= 0 && rr < chess.length && cc >= 0 && cc < chess[0].length) {
+                    if (chess[rr][cc] != 0)
+                        return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static void nqueens(int qpsf, int tq, int[][] chess) {
+        // write your code here
+        if (qpsf == tq) {
+            for (int i = 0; i < chess.length; i++) {
+                for (int j = 0; j < chess.length; j++) {
+                    if (chess[i][j] != 0) {
+                        System.out.print("q" + chess[i][j] + "\t");
+                    } else {
+                        System.out.print("-\t");
+                    }
+                }
+
+                System.out.println();
+
+            }
+
+            return;
+        }
+        for (int i = 0; i < chess.length * chess.length; i++) {
+            int row = i / chess.length;
+            int col = i % chess.length;
+            if (chess[row][col] == 0 && IsQueenSafe(chess, row, col)) {
+                chess[row][col] = qpsf + 1;
+                nqueens(qpsf + 1, tq, chess);
+                chess[row][col] = 0;
+            }
+        }
+    }
+
     public static void main(String[] args) {
 
     }
