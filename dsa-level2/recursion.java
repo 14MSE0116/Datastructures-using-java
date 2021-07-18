@@ -3,6 +3,7 @@
  * recursion
  */
 import java.io.*;
+import java.util.HashMap;
 
 public class recursion {
 
@@ -384,6 +385,102 @@ public class recursion {
                 chess[row][col] = 0;
             }
         }
+    }
+
+    // Permutations - Words - 1
+
+    public static void generateWords(int cs, int ts, HashMap<Character, Integer> fmap, String asf) {
+        // write your code here
+        if (cs > ts) {
+            System.out.println(asf);
+            return;
+        }
+
+        for (char ch : fmap.keySet()) {
+            if (fmap.get(ch) > 0) {
+                int old = fmap.get(ch);
+                fmap.put(ch, old - 1);
+                generateWords(cs + 1, ts, fmap, asf + ch);
+                fmap.put(ch, old);
+            }
+        }
+    }
+
+    // Permutations - Words - 2
+    // cc->current character
+    // li->last index
+    public static void generateWords(int cc, String str, Character[] spots, HashMap<Character, Integer> li) {
+        if (cc == str.length()) {
+            for (char ch : spots) {
+                System.out.print(ch);
+            }
+            System.out.println();
+            return;
+        }
+        // write your code here
+        char ch = str.charAt(cc);
+        int lsi = li.get(ch); // last spot
+        for (int box = lsi + 1; box < spots.length; box++) {
+            if (spots[box] == null) {
+                spots[box] = ch;
+                li.put(ch, box);
+                generateWords(cc + 1, str, spots, li);
+                li.put(ch, lsi);
+                spots[box] = null;
+            }
+        }
+
+    }
+
+    // i>index,usr->unique,ssf->selected so fat,ts->total selec
+    public static void combination(int i, String ustr, int ssf, int ts, String asf) {
+        if (i == ustr.length()) {
+            if (ssf == ts) {
+                System.out.println(asf);
+            }
+            return;
+        }
+        char ch = ustr.charAt(i);
+        // yes call
+        combination(i + 1, ustr, ssf + 1, ts, asf + ch);
+        // no call
+        combination(i + 1, ustr, ssf, ts, asf);
+    }
+
+    // lc->last character
+    public static void combination(String ustr, int ssf, int ts, String asf, int lc) {
+        if (ssf == ts) {
+            System.out.println(asf);
+            return;
+        }
+
+        for (int i = lc + 1; i < ustr.length(); i++) {
+            char ch = ustr.charAt(i);
+            combination(ustr, ssf + 1, ts, asf + ch, i);
+        }
+    }
+
+    public static void permute(String ustr, int ssf, int i, Character slots[]) {
+        if (i == ustr.length()) {
+            if (ssf == slots.length) {
+                for (char c : slots) {
+                    System.out.print(c);
+                }
+                System.out.println();
+            }
+            return;
+        }
+        char ch = ustr.charAt(i);
+
+        for (int s = 0; s < slots.length; s++) {
+            if (slots[s] == null) {
+                slots[s] = ch;
+                permute(ustr, ssf + 1, i + 1, slots);
+                slots[s] = null;
+            }
+        }
+
+        permute(ustr, ssf, i + 1, slots);
     }
 
     public static void main(String[] args) {
