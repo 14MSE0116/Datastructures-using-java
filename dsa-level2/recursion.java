@@ -4,6 +4,7 @@
  */
 import java.io.*;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class recursion {
 
@@ -481,6 +482,76 @@ public class recursion {
         }
 
         permute(ustr, ssf, i + 1, slots);
+    }
+
+    // words klength words 2
+    public static void permute(String ustr, HashSet<Character> vis, int cs, int ts, String asf) {
+        if (cs == ts) {
+            System.out.println(asf);
+            return;
+        }
+        for (int i = 0; i < ustr.length(); i++) {
+            char ch = ustr.charAt(i);
+            if (vis.contains(ch) == false) {
+                vis.add(ch); // place
+                permute(ustr, vis, cs + 1, ts, asf + ch);
+                vis.remove(ch);
+
+            }
+        }
+    }
+
+    // words-kselection3
+    //cc->current character
+    public static void combination(String ustr, int cc,HashMap<Character,Integer>fmap,String asf,int k) {
+        
+        int ssf=asf.length();
+        if(ssf==k){
+            System.out.println(asf);
+            return;
+        }
+        
+        if(cc==ustr.length())
+        return;
+
+
+        char ch=ustr.charAt(cc);
+        int freq=fmap.get(ch);
+
+       
+
+        for(int i=freq;i>0;i--){
+            if(i+ssf<=k){
+             String str="";
+             for(int j=0;j<i;j++){
+                 str+=ch;
+             }
+             combination(ustr,cc+1,fmap,asf+str,k);  
+            }
+        }
+
+        combination(ustr,cc+1,fmap,asf,k);  
+
+    }
+
+    //wordks-k-selection-4
+    // Words - K Selection - 4, li->last index, cs-> current spot, ts-> total spot
+    public static void combination(String ustr,HashMap<Character,Integer>fmap,int li,String asf,int cs,int  ts){
+        
+        if(cs==ts){
+            System.out.println(asf);
+            return;
+        }
+
+        for(int i=li;i<ustr.length();i++){
+            char ch=ustr.charAt(i);
+            int freq=fmap.get(ch);
+            if(freq>0){
+                fmap.put(ch, freq-1);
+                combination(ustr,fmap,asf+ch,cs+1,ts);
+                fmap.put(ch, freq);
+            }
+        }
     }
 
     public static void main(String[] args) {
