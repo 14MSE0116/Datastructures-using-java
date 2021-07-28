@@ -3,6 +3,7 @@
  * recursion
  */
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -502,55 +503,457 @@ public class recursion {
     }
 
     // words-kselection3
-    //cc->current character
-    public static void combination(String ustr, int cc,HashMap<Character,Integer>fmap,String asf,int k) {
-        
-        int ssf=asf.length();
-        if(ssf==k){
+    // cc->current character
+    public static void combination(String ustr, int cc, HashMap<Character, Integer> fmap, String asf, int k) {
+
+        int ssf = asf.length();
+        if (ssf == k) {
             System.out.println(asf);
             return;
         }
-        
-        if(cc==ustr.length())
-        return;
 
+        if (cc == ustr.length())
+            return;
 
-        char ch=ustr.charAt(cc);
-        int freq=fmap.get(ch);
+        char ch = ustr.charAt(cc);
+        int freq = fmap.get(ch);
 
-       
-
-        for(int i=freq;i>0;i--){
-            if(i+ssf<=k){
-             String str="";
-             for(int j=0;j<i;j++){
-                 str+=ch;
-             }
-             combination(ustr,cc+1,fmap,asf+str,k);  
+        for (int i = freq; i > 0; i--) {
+            if (i + ssf <= k) {
+                String str = "";
+                for (int j = 0; j < i; j++) {
+                    str += ch;
+                }
+                combination(ustr, cc + 1, fmap, asf + str, k);
             }
         }
 
-        combination(ustr,cc+1,fmap,asf,k);  
+        combination(ustr, cc + 1, fmap, asf, k);
 
     }
 
-    //wordks-k-selection-4
+    // wordks-k-selection-4
     // Words - K Selection - 4, li->last index, cs-> current spot, ts-> total spot
-    public static void combination(String ustr,HashMap<Character,Integer>fmap,int li,String asf,int cs,int  ts){
-        
-        if(cs==ts){
+    public static void combination(String ustr, HashMap<Character, Integer> fmap, int li, String asf, int cs, int ts) {
+
+        if (cs == ts) {
             System.out.println(asf);
             return;
         }
 
-        for(int i=li;i<ustr.length();i++){
-            char ch=ustr.charAt(i);
-            int freq=fmap.get(ch);
-            if(freq>0){
-                fmap.put(ch, freq-1);
-                combination(ustr,fmap,asf+ch,cs+1,ts);
+        for (int i = li; i < ustr.length(); i++) {
+            char ch = ustr.charAt(i);
+            int freq = fmap.get(ch);
+            if (freq > 0) {
+                fmap.put(ch, freq - 1);
+                combination(ustr, fmap, li, asf + ch, cs + 1, ts);
                 fmap.put(ch, freq);
             }
+        }
+    }
+
+    // words -k selection words -3
+    public static void words_k_selection_words3(String str, int cci, int ssf, int ts, Character[] slots,
+            HashMap<Character, Integer> map) {
+
+        if (cci == str.length()) {
+            if (ssf == ts) {
+                for (char ch : slots)
+                    System.out.print(ch);
+                System.out.println();
+            }
+
+            return;
+        }
+
+        char ch = str.charAt(cci); // ch->current character
+        int loc = map.get(ch); // loc->stands for last occurence of character
+
+        // yes call
+        for (int i = loc + 1; i < slots.length; i++) {
+            // change last occurence of character
+            if (slots[i] == null) {
+                map.put(ch, i);
+                slots[i] = ch;
+                words_k_selection_words3(str, cci + 1, ssf + 1, ts, slots, map);
+                slots[i] = null;
+                // reset last occurence of character
+                map.put(ch, loc);
+            }
+        }
+        if (loc == -1) {
+            words_k_selection_words3(str, cci + 1, ssf, ts, slots, map);
+        }
+
+    }
+
+    public static void Words_K_Length_Words_4(String ustr, int cc, int ts, String asf,
+            HashMap<Character, Integer> fmap) {
+        // cc->current slots ts->total slots
+        if (cc == ts) {
+            System.out.println(asf);
+            return;
+        }
+        for (int i = 0; i < ustr.length(); i++) {
+            char ch = ustr.charAt(i);
+            int freq = fmap.get(ch);
+            if (fmap.get(ch) > 0) {
+                fmap.put(ch, freq - 1);
+                Words_K_Length_Words_4(ustr, cc + 1, ts, asf + ch, fmap);
+                fmap.put(ch, freq);
+            }
+        }
+
+    }
+
+    // Coin Change - Combinations - 1
+    public static void coinChange(int i, int[] coins, int amtsf, int tamt, String asf) {
+        // write your code here
+        if (amtsf == tamt) {
+            System.out.println(asf + ".");
+            return;
+        }
+
+        if (i == coins.length)
+            return;
+
+        if (amtsf + coins[i] <= tamt)
+            coinChange(i + 1, coins, amtsf + coins[i], tamt, asf + coins[i] + "-");
+
+        coinChange(i + 1, coins, amtsf, tamt, asf);
+
+    }
+
+    // Coin Change - Combinations - 2
+    public static void coinChange2(int i, int[] coins, int amtsf, int tamt, String asf) {
+        // write your code here
+        if (amtsf == tamt) {
+            System.out.println(asf + ".");
+            return;
+        }
+
+        if (i == coins.length)
+            return;
+
+        if (amtsf + coins[i] <= tamt)
+            coinChange2(i, coins, amtsf + coins[i], tamt, asf + coins[i] + "-");
+
+        coinChange2(i + 1, coins, amtsf, tamt, asf);
+
+    }
+
+    // Coin Change - Permutations - 1
+    public static void coinChange(int[] coins, int amtsf, int tamt, String asf, boolean[] used) {
+        // write your code here
+        if (amtsf == tamt) {
+            System.out.println(asf + ".");
+            return;
+        }
+        for (int i = 0; i < coins.length; i++) {
+            if (used[i] == false) {
+                used[i] = true;
+                if (amtsf + coins[i] <= tamt) {
+                    coinChange(coins, amtsf + coins[i], tamt, asf + coins[i] + "-", used);
+                }
+                used[i] = false;
+            }
+        }
+    }
+
+    // Coin Change - Permutations - 2
+    public static void coinChange(int[] coins, int amtsf, int tamt, String asf) {
+        // write your code here
+        if (amtsf == tamt) {
+            System.out.println(asf + ".");
+            return;
+        }
+
+        for (int coin : coins) {
+            if (amtsf + coin <= tamt) {
+                coinChange(coins, amtsf + coin, tamt, asf + coin + "-");
+            }
+        }
+    }
+
+    // Lexicographical Numbers
+    public static void Lexicography(int val, int n) {
+        // base case
+        if (val > n)
+            return;
+
+        // self printing
+        System.out.println(val);
+        // family
+        for (int i = 0; i < 10; i++)
+            Lexicography(10 * val + i, n);
+    }
+
+    // Gold Mine
+    static int max = 0;
+    static int xdir[] = { -1, 0, 1, 0 };
+    static int ydir[] = { 0, -1, 0, 1 };
+
+    public static void getMaxGold(int[][] arr) {
+        // write your code here
+        boolean vis[][] = new boolean[arr.length][arr[0].length];
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = 0; j < arr[0].length; j++) {
+                if (arr[i][j] > 0) {
+                    int res = dfs(arr, i, j);
+                    max = Math.max(max, res);
+                }
+            }
+        }
+
+    }
+
+    public static int dfs(int arr[][], int i, int j) {
+        // mark
+        int gold = arr[i][j];
+        arr[i][j] *= -1;
+
+        // visit in neighttbours
+        for (int d = 0; d < xdir.length; d++) {
+            int r = i + xdir[d];
+            int c = j + ydir[d];
+            if (r >= 0 && r < arr.length && c >= 0 && c < arr[0].length) {
+                if (arr[r][c] > 0) {
+                    gold += dfs(arr, r, c);
+                }
+            }
+        }
+        return gold;
+    }
+
+    public static void display(int[][] board) {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                System.out.print(board[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    public static boolean isSafeToPlacenum(int[][] board, int row, int col, int num) {
+        // check in row
+        for (int c = 0; c < board[0].length; c++) {
+            if (board[row][c] == num)
+                return false;
+        }
+        // check in col
+        for (int r = 0; r < board.length; r++) {
+            if (board[r][col] == num)
+                return false;
+        }
+
+        // check in sub matrix
+        // rr and cc is starting point of sub matrix
+        int rr = row - (row % 3);
+        int cc = col - (col % 3);
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (board[i + rr][j + cc] == num)
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static void solveSudoku(int[][] board, int i, int j) {
+        if (i == board.length) {
+            display(board);
+            return;
+        }
+        // write yopur code here
+        if (board[i][j] == 0) {
+            for (int num = 1; num < 10; num++) {
+                if (isSafeToPlacenum(board, i, j, num)) {
+                    // place
+                    board[i][j] = num;
+                    if (j == board[0].length - 1)
+                        solveSudoku(board, i + 1, 0);
+                    else
+                        solveSudoku(board, i, j + 1);
+
+                    // unplace
+                    board[i][j] = 0;
+                }
+            }
+        } else {
+
+            if (j == board[0].length - 1)
+                solveSudoku(board, i + 1, 0);
+            else
+                solveSudoku(board, i, j + 1);
+        }
+    }
+
+    public static void solveSudoku1(int board[][], ArrayList<Integer> list, int idx) {
+
+        if (idx == list.size()) {
+            display(board);
+            return;
+        }
+
+        int bno = list.get(idx);
+        int r = bno / board.length;
+        int c = bno % board.length;
+
+        for (int num = 1; num < 10; num++) {
+            if (isSafeToPlacenum(board, r, c, num)) {
+                board[r][c] = num;
+                solveSudoku1(board, list, idx + 1);
+                board[r][c] = 0;
+            }
+        }
+
+    }
+
+    public static void solveSudoku1D(int[][] board) {
+        ArrayList<Integer> list = new ArrayList<>();
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                if (board[i][j] == 0) {
+                    int bno = (board.length * i) + j;
+                    list.add(bno);
+                }
+
+            }
+        }
+        solveSudoku1(board, list, 0);
+    }
+
+    public static int IntegerFromMap(String str, HashMap<Character, Integer> charIntMap) {
+
+        int num = 0;
+
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            int n = charIntMap.get(ch);
+            num = (num * 10 + n);
+        }
+        return num;
+    }
+
+    // cyrptomatic
+    // s1->SEND s2->MORE s3MONEY unique=SENDMORE
+    public static void solution(String unique, int idx, HashMap<Character, Integer> charIntMap, boolean[] usedNumbers,
+            String s1, String s2, String s3) {
+        if (idx == unique.length()) {
+            int n1 = IntegerFromMap(s1, charIntMap);
+            int n2 = IntegerFromMap(s2, charIntMap);
+            int n3 = IntegerFromMap(s3, charIntMap);
+
+            if (n1 + n2 == n3) {
+                // print mapping in sorted order;
+                for (int i = 0; i < 26; i++) {
+                    char ch = (char) (i + 'a');
+                    if (charIntMap.containsKey(ch) == true) {
+                        System.out.print(ch + "-" + charIntMap.get(ch) + " ");
+                    }
+                }
+                System.out.println();
+            }
+            return;
+        }
+        // write your code here
+        char ch = unique.charAt(idx);
+
+        for (int i = 0; i < 10; i++) {
+            if (usedNumbers[i] == false) {
+                usedNumbers[i] = true;
+                charIntMap.put(ch, i);
+                solution(unique, idx + 1, charIntMap, usedNumbers, s1, s2, s3);
+                usedNumbers[i] = false;
+                charIntMap.remove(ch);
+            }
+
+        }
+    }
+
+    // public static boolean canPlaceHorizontal(char[][]grid,int r,int c,String
+    // word){
+
+    // }
+
+    // public static boolean canPlaceVertical(char[][]grid,int r,int c,String word){
+
+    // }
+
+    // public static boolean[]placehorizontal(char[][]grid,int r,int c,String word){
+
+    // }
+
+    // public static boolean[]placevertical(char[][]grid,int r,int c,String word){
+
+    // }
+
+    // public static void unplacehorizontal(char[][]grid,int r,int c,boolean
+    // status){
+
+    // }
+
+    // public static void unplacevertical(char[][]grid,int r,int c,boolean status){
+
+    // }
+
+    // public static void solution(char[][]grid,String[]words,int vidx){
+
+    // String word=words[vidx];
+    // for(int i=0;i<grid.length;i++){
+    // for(int j=0;j<grid[0].length;j++){
+    // if(grid[i][j]=='-' || grid[i][j]==word.charAt(0)){
+    // //horizontal
+    // if(canPlaceHorizontal(grid,i,j,word)){
+    // //place
+    // boolean[]status=placehorizontal(grid,i,j,word);
+    // //unplace
+    // unplacehorizontal(grid, i, j, status);
+    // }
+
+    // //vertical try
+    // if(canPlaceVertical(grid,, i, j, word)){
+    // //place
+    // placevertical(grid,i,j,word);
+
+    // //unplace
+    // }
+    // }
+    // }
+    // }
+    // }
+
+    // K-partitions
+    public static void solution(int i, int n, int k, int rssf, ArrayList<ArrayList<Integer>> ans) {
+        if (i > n) {
+            if (ans.size() == k) {
+                System.out.print(count + ". ");
+                for (int j = 0; j < ans.size(); j++) {
+                    ArrayList<Integer> list = ans.get(j);
+                    System.out.print(list + " ");
+                }
+                System.out.println();
+                count++;
+            }
+            return;
+        }
+        // n - 1, k work, add with previous options
+        for (int j = 0; j < ans.size(); j++) {
+            ArrayList<Integer> list = ans.get(j);
+            list.add(i);
+            solution(i + 1, n, k, rssf, ans);
+            list.remove(list.size() - 1);
+        }
+
+        // n - 1, k - 1, start from myself if size + 1 <= k
+        if (ans.size() + 1 <= k) {
+            ArrayList<Integer> mres = new ArrayList<>();
+            mres.add(i);
+            ans.add(mres);
+            solution(i + 1, n, k, rssf, ans);
+            ans.remove(ans.size() - 1);
         }
     }
 
