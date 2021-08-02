@@ -6,6 +6,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Stack;
 
 public class recursion {
 
@@ -1236,6 +1237,294 @@ public class recursion {
                 }
             }
         }
+    }
+
+    // Friends K pairing
+    static int counter = 1;
+
+    public static void solution(int i, int n, boolean[] used, String asf) {
+        // write your code here
+        if (i > n) {
+            System.out.println(counter + "." + asf);
+            counter++;
+            return;
+        }
+        if (used[i] == true) {
+            // already included in lowwer lve so no option in current level
+            solution(i + 1, n, used, asf);
+        }
+
+        else {
+            // single call
+            used[i] = true;
+            solution(i + 1, n, used, asf + "(" + i + ") ");
+            // pair up call
+            for (int j = i + 1; j <= n; j++) {
+                if (used[j] == false) {
+                    used[j] = true;
+                    solution(i + 1, n, used, asf + "(" + i + "," + j + ") ");
+                    used[j] = false;
+                }
+            }
+            used[i] = false;
+        }
+
+    }
+
+    // All Palindromic Permutations
+    public static void generatepw(int cs, int ts, HashMap<Character, Integer> fmap, Character oddc, String asf) {
+        if (cs == ts) {
+            String rev = reverse(asf);
+            if (oddc == null) {
+                System.out.println(asf + rev);
+            } else
+                System.out.println(asf + oddc + rev);
+            return;
+        }
+
+        for (char ch : fmap.keySet()) {
+            int freq = fmap.get(ch);
+            if (freq > 0) {
+                // use current charecter and reduce frq;
+                fmap.put(ch, freq - 1);
+                generatepw(cs + 1, ts, fmap, oddc, asf + ch);
+                fmap.put(ch, freq);
+            }
+        }
+
+    }
+
+    private static String reverse(String asf) {
+        String ans = "";
+        for (int i = asf.length() - 1; i >= 0; i--)
+            ans += asf.charAt(i);
+        return ans;
+    }
+
+    public static void solve(HashMap<Character, Integer> fmap) {
+        int oddcount = 0;
+        Character ch = null; // blank character
+        int len = 0;
+        for (char key : fmap.keySet()) {
+            len += fmap.get(key);
+            if (fmap.get(key) % 2 == 1) {
+                oddcount++;
+                ch = key;
+            }
+            fmap.put(key, fmap.get(key) / 2);
+        }
+        if (oddcount > 1) {
+            System.out.println("-1");
+            return;
+        }
+
+        generatepw(0, len / 2, fmap, ch, "");
+    }
+
+    // All Palindroomic Partitions
+    public static boolean isPlaindromic(String str) {
+        int left = 0;
+        int right = str.length() - 1;
+        while (left < right) {
+            if (str.charAt(left) != str.charAt(right))
+                return false;
+
+            left++;
+            right--;
+        }
+        return true;
+    }
+
+    public static void solution(String str, String asf) {
+        // write you code here
+        if (str.length() == 0) {
+            System.out.println(asf);
+            return;
+        }
+
+        for (int i = 0; i < str.length(); i++) {
+            String options = str.substring(0, i + 1);
+            String roq = str.substring(i + 1);
+            if (isPlaindromic(options)) {
+                solution(roq, asf + "(" + options + ") ");
+            }
+        }
+
+    }
+
+    // K subsets with equal sum
+    public static boolean isSumSame(int[] arr) {
+        int val = arr[0];
+        for (int ele : arr) {
+            if (ele != val)
+                return false;
+        }
+        return true;
+    }
+
+    public static void solution(int[] arr, int indx, int sum, int k, int[] subsetSum, int ssf,
+            ArrayList<ArrayList<Integer>> ans) {
+        if (indx == arr.length) {
+            if (ssf == k) {
+                if (isSumSame(subsetSum) == true) {
+                    for (ArrayList<Integer> list : ans) {
+                        System.out.print(list + " ");
+                    }
+                    System.out.println();
+                }
+            }
+            return;
+        }
+        int val = arr[indx];
+        int i = 0;
+        // merging with existing set
+        while (i < ans.size() && ans.get(i).size() > 0) {
+            if (subsetSum[i] + val <= (sum / k)) {  
+                // increase subset sum
+                subsetSum[i] += val;
+                // add in answer so far
+                ans.get(i).add(val);
+                solution(arr, indx + 1, sum, k, subsetSum, ssf, ans);
+                // decrease subset sum
+                subsetSum[i] -= val;
+                // remove from asf
+                ans.get(i).remove(ans.get(i).size() - 1);
+            }
+            i++;
+        }
+        if (i < k) {
+            // single call with new set
+            // increase subset sum
+            subsetSum[i] += val;
+            // add in answer so far
+            ans.get(i).add(val);
+            solution(arr, indx + 1, sum, k, subsetSum, ssf + 1, ans);
+            // decrease subset sum
+            subsetSum[i] -= val;
+            // remove from asf
+            ans.get(i).remove(ans.get(i).size() - 1);
+        }
+    }
+
+    // Tug of war
+    // soset1->sum of set1
+    static int mindiff = Integer.MAX_VALUE;
+    static String ans = "";
+
+    public static void solve(int[] arr, int idx, ArrayList<Integer> set1, ArrayList<Integer> set2, int sum1, int sum2) {
+        // write your code here
+
+        if (idx == arr.length) {
+            int diff = Math.abs(sum1 - sum2);
+            if (diff < mindiff) {
+                mindiff = diff;
+                ans = "" + set1 + " " + set2;
+            }
+            return;
+        }
+
+        int val = arr[idx];
+
+        // val in set1
+        if (set1.size() < (arr.length + 1) / 2) {
+            set1.add(val);
+            solve(arr, idx + 1, set1, set2, sum1 + val, sum2);
+            set1.remove(set1.size() - 1);
+        }
+
+        // val in set2
+        if (set2.size() < (arr.length + 1) / 2) {
+            set2.add(val);
+            solve(arr, idx + 1, set1, set2, sum1, sum2 + val);
+            set2.remove(set2.size() - 1);
+        }
+
+    }
+
+    // pattern matching
+    public static void solution(String str, String pattern, HashMap<Character, String> map, String asf, int idx) {
+        // write your code here
+
+        if (idx == pattern.length()) {
+            if (str.length() == 0)
+                System.out.println(asf + ".");
+            return;
+        }
+
+        char ch = pattern.charAt(idx);
+        String mapping = map.get(ch);
+
+        for (int i = 0; i < str.length(); i++) {
+            String substr = str.substring(0, i + 1);
+            String roq = str.substring(i + 1);
+            // mapping
+            map.put(ch, substr);
+            if (mapping.length() > 0) {
+                if (substr.equals(mapping) == true) {
+                    solution(roq, pattern, map, asf, idx + 1);
+                }
+            } else {
+                // mapping didnt happen
+                solution(roq, pattern, map, asf + ch + " -> " + substr + ", ", idx + 1);
+            }
+
+            // reset
+            map.put(ch, mapping);
+        }
+
+    }
+
+    // word break
+    public static void wordBreak(String str, String ans, HashSet<String> set) {
+        // write your code here
+        if (str.length() == 0) {
+            System.out.println(ans);
+            return;
+        }
+
+        for (int i = 0; i < str.length(); i++) {
+            String word = str.substring(0, i + 1);
+            String roq = str.substring(i + 1);
+
+            if (set.contains(word)) {
+                wordBreak(roq, ans + word + " ", set);
+            }
+        }
+    }
+
+    // Remove Invalid Parenthesis
+    public static void solution(String str, int minRemoval, HashSet<String> ans) {
+        // write your code here
+        if (minRemoval == 0) {
+            if (getMin(str) == 0 && ans.contains(str) == false) {
+                ans.add(str);
+                System.out.println(str);
+            }
+            return;
+        }
+        for (int i = 0; i < str.length(); i++) {
+            String left = str.substring(0, i);
+            String right = str.substring(i + 1);
+
+            solution(left + right, minRemoval - 1, ans);
+        }
+    }
+
+    public static int getMin(String str) {
+        // write your code here
+        Stack<Character> st = new Stack<>();
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            if (ch == '(') {
+                st.push(ch);
+            } else {
+                if (st.size() > 0 && st.peek() == '(') {
+                    st.pop();
+                } else
+                    st.push(ch);
+            }
+        }
+        return st.size();
     }
 
     public static void main(String[] args) {
