@@ -140,7 +140,7 @@ public class linkedlist {
     }
 
     // leetcode 21. https://leetcode.com/problems/merge-two-sorted-lists/
-    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+    public static ListNode mergeTwoLists(ListNode l1, ListNode l2) {
         if (l1 == null || l2 == null)
             return l1 == null ? l2 : l1;
 
@@ -326,10 +326,69 @@ public class linkedlist {
     // leetcode 328. https://leetcode.com/problems/odd-even-linked-list/
     public ListNode oddEvenList(ListNode head) {
         // write your code here
+        return null;
     }
     // addition
     // subtraction
     // multiplication
+
+    // remove all duplicates leetcode82
+    public static ListNode removeDuplicates(ListNode head) {
+        ListNode head2 = new ListNode(-1);
+        ListNode i = head2;
+        ListNode curr = head;
+        i.next = curr;
+
+        while (curr != null) {
+
+            curr = curr.next;
+            boolean flag = false;
+            while (curr != null && i.next.val == curr.val) {
+                flag = true;
+                curr = curr.next;
+            }
+
+            if (flag == true) {
+                // repetiotns have come
+                i.next = curr;
+            } else {
+                // no repettopn
+                i = i.next;
+            }
+        }
+        return head2.next;
+
+    }
+
+    // remove duplicates from sorted linked list leetcode 83
+    public static ListNode removeDuplicates2(ListNode head) {
+        if (head == null)
+            return null;
+        ListNode i = head;
+        ListNode curr = head.next;
+        while (curr != null) {
+            if (i.val != curr.val) {
+                i.next = curr;
+                i = curr;
+            }
+            curr = curr.next;
+        }
+        i.next = null;
+        return head;
+    }
+
+    // Merge k sorted linkedlist using divide and conquer
+    public static ListNode mergeKLists(ListNode[] lists, int st, int end) {
+        if (st == end)
+            return lists[st];
+
+        int mid = (st + end) / 2;
+        ListNode l1 = mergeKLists(lists, st, mid);
+        ListNode l2 = mergeKLists(lists, mid + 1, end);
+
+        ListNode res = mergeTwoLists(l1, l2);
+        return res;
+    }
 
     public static void ques() {
         // lists
