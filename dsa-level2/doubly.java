@@ -265,7 +265,7 @@ class DoublyLinkedList {
         return this.size;
     }
 }
-
+    
 public class doubly {
     public static void main(String[] args) {
 
