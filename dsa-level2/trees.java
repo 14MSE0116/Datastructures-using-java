@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class trees {
-    public class TreeNode {
+    public static class TreeNode {
         int val;
         TreeNode left;
         TreeNode right;
@@ -17,6 +17,20 @@ public class trees {
             this.val = val;
             this.left = left;
             this.right = right;
+        }
+    }
+
+    static class Node {
+        int data;
+        Node left, right;
+
+        public Node(int data) {
+            this.data = data;
+        }
+
+        public Node() {
+            this.data = 0;
+            this.left = this.right = null;
         }
     }
 
@@ -89,6 +103,107 @@ public class trees {
 
         root.left = constructPrepost(preorder, postorder, prest + 1, prest + elementcount, post, idx);
         root.right = constructPrepost(preorder, postorder, prest + elementcount + 1, prend, idx + 1, poend - 1);
+        return root;
+    }
+
+    // construct tree from level order and levelorder
+    // https://practice.geeksforgeeks.org/problems/construct-tree-from-inorder-and-levelorder/1
+    Node buildTree(int inord[], int lvl[]) {
+        // your code here
+        ArrayList<Integer> level = new ArrayList<>();
+        for (int val : lvl)
+            level.add(val);
+
+        return constructInLevel(inord, level, 0, lvl.length - 1);
+    }
+
+    private static Node constructInLevel(int[] inord, ArrayList<Integer> level, int inst, int inen) {
+        if (level.size() == 0)
+            return null;
+
+        Node root = new Node(level.get(0));
+
+        int idx = inst;
+        HashSet<Integer> set = new HashSet<>();
+        while (inord[idx] != level.get(0)) {
+            set.add(inord[idx]);
+            idx++;
+        }
+
+        ArrayList<Integer> llvl = new ArrayList<>();
+        ArrayList<Integer> rlvl = new ArrayList<>();
+
+        for (int i = 1; i < level.size(); i++) {
+            int val = level.get(i);
+            if (set.contains(val)) {
+                llvl.add(val);
+            } else {
+                rlvl.add(val);
+            }
+        }
+
+        root.left = constructInLevel(inord, llvl, inst, idx - 1);
+        root.right = constructInLevel(inord, rlvl, idx + 1, inen);
+        return root;
+    }
+
+    // construct bst from inorder
+    public static TreeNode constructFromInOrder(int[] inOrder) {
+
+        return constructBstUsingInordder(inOrder, 0, inOrder.length - 1);
+    }
+
+    public static TreeNode constructBstUsingInordder(int inorder[], int lo, int hi) {
+
+        if (lo > hi)
+            return null;
+
+        int mid = lo + (hi - lo) / 2;
+        TreeNode root = new TreeNode(inorder[mid]);
+        root.left = constructBstUsingInordder(inorder, lo, mid - 1);
+        root.right = constructBstUsingInordder(inorder, mid + 1, hi);
+
+        return root;
+    }
+
+    // construct bst from
+    // preorder-https://leetcode.com/problems/construct-binary-search-tree-from-preorder-traversal/
+    static int idx;
+
+    public TreeNode bstFromPreorder(int[] preorder) {
+        idx = 0;
+        return bstfrompreorder(preorder, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    }
+
+    public static TreeNode bstfrompreorder(int preorder[], int leftrange, int rightrange) {
+
+        if (idx >= preorder.length || preorder[idx] < leftrange || preorder[idx] > rightrange)
+            return null;
+
+        int val = preorder[idx++];
+        TreeNode root = new TreeNode(val);
+        root.left = bstfrompreorder(preorder, leftrange, val);
+        root.right = bstfrompreorder(preorder, val, rightrange);
+
+        return root;
+    }
+
+    // construct bst from
+    // postorder-https://practice.geeksforgeeks.org/problems/construct-bst-from-post-order/1#
+    public static Node constructTree(int post[], int n) {
+        // Add your code here.
+        idx = n - 1;
+        return constructTreeFromPostorder(post, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    }
+
+    public static Node constructTreeFromPostorder(int post[], int leftrange, int rightrange) {
+        if (idx < 0 || post[idx] < leftrange || post[idx] > rightrange)
+            return null;
+
+        int val = post[idx--];
+        Node root = new Node(val);
+        root.right = constructTreeFromPostorder(post, val, rightrange);
+        root.left = constructTreeFromPostorder(post, leftrange, val);
         return root;
     }
 
