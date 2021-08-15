@@ -1,5 +1,7 @@
 import java.util.*;
 
+import org.graalvm.compiler.lir.amd64.AMD64Move.LeaDataOp;
+
 public class trees {
     public static class TreeNode {
         int val;
@@ -35,7 +37,7 @@ public class trees {
     }
 
     // construct tree from in and preorder
-    private TreeNode constructPreIn(int preorder[], int inorder[], int prest, int preend, int inst, int inend) {
+    private TreeNode constructPreIn(int preorder[], int inorder[], int prest, int prestart, int inst, int instart) {
 
         TreeNode root = new TreeNode(preorder[prest]);
         // find presnec of root node in inorder
@@ -47,7 +49,7 @@ public class trees {
         int elementcount = idx - inst;
 
         root.left = constructPreIn(preorder, inorder, prest, prest + elementcount, inst, idx - 1);
-        root.right = constructPreIn(preorder, inorder, prest + elementcount + 1, preend, idx + 1, inend);
+        root.right = constructPreIn(preorder, inorder, prest + elementcount + 1, prestart, idx + 1, instart);
         return root;
 
     }
@@ -64,20 +66,20 @@ public class trees {
 
     }
 
-    private TreeNode constructPostIn(int postorder[], int inorder[], int post, int poend, int inst, int inend) {
+    private TreeNode constructPostIn(int postorder[], int inorder[], int post, int postart, int inst, int instart) {
 
-        if (post > poend)
+        if (post > postart)
             return null;
-        TreeNode root = new TreeNode(postorder[poend]);
+        TreeNode root = new TreeNode(postorder[postart]);
 
         int idx = inst;
-        while (inorder[idx] != postorder[poend]) {
+        while (inorder[idx] != postorder[postart]) {
             idx++;
         }
         int elementcount = idx - inst;
 
         root.left = constructPostIn(postorder, inorder, post, post + elementcount - 1, inst, idx - 1);
-        root.right = constructPostIn(postorder, inorder, post + elementcount, poend - 1, idx + 1, inend);
+        root.right = constructPostIn(postorder, inorder, post + elementcount, postart - 1, idx + 1, instart);
 
         return root;
     }
@@ -87,11 +89,11 @@ public class trees {
         return constructPrepost(preorder, postorder, 0, preorder.length - 1, 0, postorder.length - 1);
     }
 
-    public TreeNode constructPrepost(int[] preorder, int[] postorder, int prest, int prend, int post, int poend) {
-        if (prest == prend)
+    public TreeNode constructPrepost(int[] preorder, int[] postorder, int prest, int prstart, int post, int postart) {
+        if (prest == prstart)
             return new TreeNode(preorder[prest]);
 
-        if (prest > prend)
+        if (prest > prstart)
             return null;
         TreeNode root = new TreeNode(preorder[prest]);
         int ele = preorder[prest + 1];
@@ -102,7 +104,7 @@ public class trees {
         int elementcount = idx - post + 1;
 
         root.left = constructPrepost(preorder, postorder, prest + 1, prest + elementcount, post, idx);
-        root.right = constructPrepost(preorder, postorder, prest + elementcount + 1, prend, idx + 1, poend - 1);
+        root.right = constructPrepost(preorder, postorder, prest + elementcount + 1, prstart, idx + 1, postart - 1);
         return root;
     }
 
@@ -205,6 +207,109 @@ public class trees {
         root.right = constructTreeFromPostorder(post, val, rightrange);
         root.left = constructTreeFromPostorder(post, leftrange, val);
         return root;
+    }
+
+    // camera cover
+    static int camera = 0;
+
+    // state-0->Camera present
+    // state 1->i'm cover
+    // state1->i'm unsafe
+    public int mincamera(TreeNode root) {
+        if (root == null)
+            return 1;
+
+        int lstate = mincamera(root.left);
+        int rstate = mincamera(root.right);
+
+        if (lstate == 1 && rstate == 1)
+            return 2;
+
+        else if (lstate == 2 || rstate == 2) {
+            camera++;
+            return 0;
+        } else
+            return 1;
+    }
+
+    public int minCameraCover(TreeNode root) {
+        camera = 0;
+        int state = mincamera(root);
+        if (state == 2)
+            camera++;
+
+        return camera;
+    }
+
+    // house roober leetcode-
+    public class RPair {
+        int withrob;
+        int withoutrob;
+
+        RPair(int withrob, int withoutrob) {
+            this.withrob = withrob;
+            this.withoutrob = withoutrob;
+        }
+
+    }
+
+    public RPair robberinHouse(TreeNode node) {
+        if (node == null) {
+            return new RPair(0, 0);
+        }
+
+        RPair left = robberinHouse(node.left);
+        RPair right = robberinHouse(node.right);
+
+        // robbery (Done)b+b'+c
+        // without robbery
+        // a+a' vs a+b' vs a'+b vs b+b'
+        int a = left.withrob;
+        int a_ = right.withrob;
+        int b = right.withrob;
+        int b_ = right.withoutrob;
+        int c = node.val;
+
+        int withRob = b + b_ + c;
+        int withoutrob = Math.max(Math.max(a + a_, a + b_), Math.max(a_ + b, b + b_));
+
+        return new RPair(withRob, withoutrob);
+
+    }
+
+    public int rob(TreeNode root) {
+        RPair res = robberinHouse(root);
+        return Math.max(res.withoutrob, res.withrob);
+    }
+
+    // leetcode 1372 zigzag helper
+    public class ZHelper {
+        int lstart; // if start at left
+        int rstart; // if start at right
+        int omax;
+
+        ZHelper(int lstart, int rstart, int omax) {
+            this.lstart = lstart;
+            this.rstart = rstart;
+            this.omax = omax;
+        }
+    }
+
+    public ZHelper longestZigZag(TreeNode node) {
+        if (node == null) {
+            return new ZHelper(-1, -1, 0);
+        }
+
+        ZHelper left = longestZigZag(node.left);
+        ZHelper right = longestZigZag(node.right);
+
+        int startAtL = left.rstart + 1;
+        int startAtR = right.lstart + 1;
+
+        int omax = Math.max(Math.max(left.omax, right.omax), Math.max(startAtL, startAtR));
+
+        return new ZHelper(startAtL, startAtR, omax);
+
     }
 
     public static void main(String[] args) {
