@@ -1,7 +1,5 @@
 import java.util.*;
 
-import org.graalvm.compiler.lir.amd64.AMD64Move.LeaDataOp;
-
 public class trees {
     public static class TreeNode {
         int val;
@@ -310,6 +308,410 @@ public class trees {
 
         return new ZHelper(startAtL, startAtR, omax);
 
+    }
+
+    // leetcode 9-https://leetcode.com/problems/recover-binary-search-tree/
+    static TreeNode prev, curr, a, b;
+
+    // pointers[0]=prev,1=curr,2=a,3=b
+    public static void recover_tree(TreeNode root, TreeNode[] pointers) {
+        if (root == null)
+            return;
+        recover_tree(root.left, pointers);
+        if (pointers[0] == null) {
+            pointers[0] = root;
+        } else {
+            pointers[1] = root;
+            if (pointers[0].val > pointers[1].val) {
+                if (pointers[3] == null) {
+                    // first encounter
+                    pointers[2] = pointers[0];
+                    pointers[3] = pointers[1];
+                } else {
+                    // second encounter
+                    pointers[3] = root;
+                }
+            }
+            pointers[0] = root;
+        }
+        // move prev and curr
+        recover_tree(root.right, pointers);
+    }
+
+    public void recoverTree(TreeNode root) {
+
+        TreeNode[] pointers = new TreeNode[4];
+        recover_tree(root, pointers);
+
+    }
+
+    // construct BST from level order
+    public class LHelper {
+        Node parent;
+        int leftrange;
+        int rightrange;
+
+        LHelper(Node parent, int leftrange, int rightrange) {
+            this.parent = parent;
+            this.leftrange = leftrange;
+            this.rightrange = rightrange;
+        }
+    }
+
+    public Node constructBST(int[] arr) {
+        // Write your code here
+        if (arr.length == 0)
+            return null;
+
+        Queue<LHelper> qu = new LinkedList<>();
+        Node root = null;
+        qu.add(new LHelper(null, Integer.MIN_VALUE, Integer.MAX_VALUE));
+        for (int i = 0; i < arr.length; i++) {
+            Node nn = new Node(arr[i]);
+            LHelper rem = null;
+            while (qu.peek().leftrange >= nn.data && nn.data >= qu.peek().rightrange) {
+                qu.remove();
+            }
+            rem = qu.remove();
+            qu.add(new LHelper(nn, rem.leftrange, nn.data));
+            qu.add(new LHelper(nn, nn.data, rem.rightrange));
+            if (rem.parent == null) {
+                root = nn;
+            } else if (rem.parent.data > nn.data) {
+                rem.parent.left = nn;
+            } else
+                rem.parent.right = nn;
+
+        }
+        return root;
+
+    }
+
+    // seriealise and deserialize tree
+    // Encodes a tree to a single string.
+    public void serialize_(TreeNode root, StringBuilder sb) {
+        if (root == null) {
+            sb.append("null#");
+            return;
+        }
+        sb.append(root.val + "#");
+        serialize_(root.left, sb);
+        serialize_(root.right, sb);
+    }
+
+    public String serialize(TreeNode root) {
+        StringBuilder sb = new StringBuilder();
+        serialize_(root, sb);
+        return sb.toString();
+    }
+
+    public class SPair {
+        TreeNode node;
+        int state;
+
+        SPair(TreeNode node, int state) {
+            this.node = node;
+            this.state = state;
+        }
+    }
+
+    // Decodes your encoded data to tree.
+    public TreeNode deserialize(String str) {
+        if (str.equals("null#"))
+            return null;
+        String[] data = str.split("#");
+        int idx = 1;
+        TreeNode root = new TreeNode(Integer.parseInt(data[0]));
+        Stack<SPair> st = new Stack<>();
+        st.push(new SPair(root, 0));
+        while (idx < data.length) {
+            if (st.peek().state == 0) {
+                if (data[idx].equals("null")) {
+                    st.peek().state++;
+                    idx++;
+                } else {
+                    TreeNode nn = new TreeNode(Integer.parseInt(data[idx]));
+                    st.peek().state++;
+                    st.peek().node.left = nn;
+                    st.push(new SPair(nn, 0));
+                    idx++;
+                }
+
+            } else if (st.peek().state == 1) {
+                if (data[idx].equals("null")) {
+                    st.peek().state++;
+                    idx++;
+                } else {
+                    TreeNode nn = new TreeNode(Integer.parseInt(data[idx]));
+                    st.peek().state++;
+                    st.peek().node.right = nn;
+                    st.push(new SPair(nn, 0));
+                    idx++;
+                }
+
+            } else {
+                st.pop();
+                continue;
+            }
+        }
+
+        return root;
+
+    }
+
+    // serailise and deserialise in generic tree
+    public static class Pair {
+        TreeNode node;
+        int state;
+
+        Pair(TreeNode node, int state) {
+            this.node = node;
+            this.state = state;
+        }
+    }
+
+    public static void serializehelper(TreeNode root, StringBuilder sb) {
+        if (root == null) {
+            sb.append("null#");
+            return;
+        }
+        sb.append(root.val + "#");
+        serializehelper(root.left, sb);
+        serializehelper(root.right, sb);
+
+    }
+
+    public static String serialize1(TreeNode root) {
+        StringBuilder sb = new StringBuilder();
+        serializehelper(root, sb);
+        return sb.toString();
+    }
+
+    // Decodes your encoded data to tree.
+    public static TreeNode deserialize2(String str) {
+        String[] data = str.split("#");
+        TreeNode root = new TreeNode(Integer.parseInt(data[0]));
+        Stack<Pair> st = new Stack<>();
+        st.push(new Pair(root, 0));
+        int idx = 1;
+        for (idx = 1; idx < data.length; idx++) {
+            if (st.peek().state == 0) {
+                if (data[idx].equals("null")) {
+                    st.peek().state++;
+                } else {
+                    TreeNode nn = new TreeNode(Integer.parseInt(data[idx]));
+                    st.peek().state++;
+                    st.peek().node.left = nn;
+                    st.push(new Pair(nn, 0));
+                }
+            } else if (st.peek().state == 1) {
+                if (data[idx].equals("null")) {
+                    st.peek().state++;
+                } else {
+                    TreeNode nn = new TreeNode(Integer.parseInt(data[idx]));
+                    st.peek().state++;
+                    st.peek().node.right = nn;
+                    st.push(new Pair(nn, 0));
+                }
+            } else {
+                st.pop();
+            }
+        }
+        return root;
+
+    }
+
+    // width of shawdo of binray tree
+    static int lh = 0;
+    static int rh = 0;
+
+    public static void width_helper(TreeNode root, int count) {
+        if (root == null)
+            return;
+
+        if (count < lh) {
+            lh = count;
+        } else if (count > rh) {
+            rh = count;
+        }
+        width_helper(root.left, count - 1);
+        width_helper(root.right, count + 1);
+    }
+
+    public static int width(TreeNode root) {
+        if (root == null)
+            return 0;
+        lh = 0;
+        rh = 0;
+        width_helper(root, 0);
+        return lh - rh + 1;
+    }
+
+    // vertical order of binary tree
+    public static class WPair {
+        TreeNode node;
+        int count;
+
+        WPair(TreeNode node, int count) {
+            this.node = node;
+            this.count = count;
+        }
+    }
+
+    public static ArrayList<ArrayList<Integer>> verticalOrderTraversal(TreeNode root) {
+
+        Queue<WPair> qu = new LinkedList<>();
+        qu.add(new WPair(root, 0));
+        HashMap<Integer, ArrayList<Integer>> map = new HashMap<>();
+        int lh = 0;
+        int rh = 0;
+
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        while (qu.size() > 0) {
+            // get+remove;
+            WPair rem = qu.remove();
+
+            // work
+            if (map.containsKey(rem.count)) {
+                map.get(rem.count).add(rem.node.val);
+            } else {
+                ArrayList<Integer> list = new ArrayList<>();
+                list.add(rem.node.val);
+                map.put(rem.count, list);
+            }
+            if (rem.count < lh)
+                lh = rem.count;
+            else if (rem.count > rh)
+                rh = rem.count;
+
+            // add children
+            if (rem.node.left != null)
+                qu.add(new WPair(rem.node.left, rem.count - 1));
+
+            if (rem.node.right != null)
+                qu.add(new WPair(rem.node.right, rem.count + 1));
+        }
+
+        for (int i = lh; i <= rh; i++) {
+            res.add(map.get(i));
+        }
+        return res;
+
+    }
+
+    // vertical order of Tree without HashMap
+    static ArrayList<Integer> verticalOrder(Node root) {
+        // add your code here
+
+        int width = width(root);
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        for (int i = 0; i < width; i++)
+            res.add(new ArrayList<>());
+
+        Queue<PPair> qu = new LinkedList<>();
+        qu.add(new PPair(root, Math.abs(lh)));
+        while (qu.size() > 0) {
+            // get+remvoe;
+            PPair rem = qu.remove();
+
+            // work
+            res.get(rem.count).add(rem.node.data);
+
+            // add children
+            if (rem.node.left != null)
+                qu.add(new PPair(rem.node.left, rem.count - 1));
+
+            if (rem.node.right != null)
+                qu.add(new PPair(rem.node.right, rem.count + 1));
+        }
+        ArrayList<Integer> ans = new ArrayList<>();
+        for (int i = 0; i < width; i++) {
+            for (int val : res.get(i)) {
+                ans.add(val);
+            }
+        }
+        return ans;
+    }
+
+    static class PPair {
+        Node node;
+        int count;
+
+        PPair(Node node, int count) {
+            this.node = node;
+            this.count = count;
+        }
+    }
+
+    static int width(Node root) {
+        width_helper(root, 0);
+        return rh - lh + 1;
+    }
+
+    static void width_helper(Node root, int count) {
+
+        if (root == null)
+            return;
+
+        if (count < lh)
+            lh = count;
+        else if (count > rh)
+            rh = count;
+
+        width_helper(root.left, count - 1);
+        width_helper(root.right, count + 1);
+    }
+
+    // Top view
+    static ArrayList<Integer> topView(Node root) {
+        // add your code
+        lh = rh = 0;
+        int width = width(root);
+
+        ArrayList<Integer> res = new ArrayList<>();
+        for (int i = 0; i < width; i++)
+            res.add(null);
+
+        Queue<PPair> qu = new LinkedList<>();
+        qu.add(new PPair(root, Math.abs(lh)));
+        while (qu.size() > 0) {
+            PPair rem = qu.remove();
+            if (res.get(rem.count) == null)
+                res.set(rem.count, rem.node.data);
+
+            if (rem.node.left != null)
+                qu.add(new PPair(rem.node.left, rem.count - 1));
+
+            if (rem.node.right != null)
+                qu.add(new PPair(rem.node.right, rem.count + 1));
+        }
+        return res;
+    }
+
+    // bottom view
+    public ArrayList<Integer> bottomView(Node root) {
+        // Code here
+        lh = rh = 0;
+        int width = width(root);
+
+        ArrayList<Integer> res = new ArrayList<>();
+        for (int i = 0; i < width; i++)
+            res.add(null);
+
+        Queue<PPair> qu = new LinkedList<>();
+        qu.add(new PPair(root, Math.abs(lh)));
+        while (qu.size() > 0) {
+            PPair rem = qu.remove();
+            // if(res.get(rem.count)==null)
+            res.set(rem.count, rem.node.data);
+
+            if (rem.node.left != null)
+                qu.add(new PPair(rem.node.left, rem.count - 1));
+
+            if (rem.node.right != null)
+                qu.add(new PPair(rem.node.right, rem.count + 1));
+        }
+        return res;
     }
 
     public static void main(String[] args) {
