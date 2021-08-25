@@ -714,6 +714,248 @@ public class trees {
         return res;
     }
 
+    // vertical order traversal - II
+    // leetcode 987
+    // https://leetcode.com/problems/vertical-order-traversal-of-a-binary-tree/
+    public List<List<Integer>> verticalTraversal(TreeNode root) {
+        lh = 0;
+        rh = 0;
+        int wd = width(root);
+        List<List<Integer>> res = new ArrayList<>();
+        for (int i = 0; i < wd; i++)
+            res.add(new ArrayList<>());
+
+        PriorityQueue<Pair> mainQ = new PriorityQueue<>();
+        PriorityQueue<Pair> childQ = new PriorityQueue<>();
+
+        mainQ.add(new Pair(root, Math.abs(lh)));
+
+        while (mainQ.size() > 0) {
+            while (mainQ.size() > 0) {
+                Pair rem = mainQ.remove();
+                res.get(rem.count).add(rem.node.val);
+
+                if (rem.node.left != null) {
+                    childQ.add(new Pair(rem.node.left, rem.count - 1));
+                }
+                if (rem.node.right != null) {
+                    childQ.add(new Pair(rem.node.right, rem.count + 1));
+                }
+            }
+            // swap the queues
+            PriorityQueue<Pair> temp = mainQ;
+            mainQ = childQ;
+            childQ = temp;
+        }
+        return res;
+    }
+
+    // Diagonal order
+    public static ArrayList<ArrayList<Integer>> diagonalOrder(TreeNode root) {
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        Queue<TreeNode> qu = new LinkedList<>();
+        qu.add(root);
+        while (qu.size() > 0) {
+            int factorsize = qu.size();
+            ArrayList<Integer> list = new ArrayList<>();
+            while (factorsize-- > 0) {
+                TreeNode factor = qu.remove();
+                while (factor != null) {
+                    list.add(factor.val);
+                    if (factor.left != null)
+                        qu.add(factor.left);
+
+                    factor = factor.right;
+                }
+
+            }
+            res.add(list);
+        }
+        return res;
+    }
+
+    // Anti Clockwise direction
+    public static ArrayList<ArrayList<Integer>> diagonalOrderanti(TreeNode root) {
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        Queue<TreeNode> qu = new LinkedList<>();
+        qu.add(root);
+        while (qu.size() > 0) {
+            int factorsize = qu.size();
+            ArrayList<Integer> list = new ArrayList<>();
+            while (factorsize-- > 0) {
+                TreeNode factor = qu.remove();
+                while (factor != null) {
+                    list.add(factor.val);
+
+                    if (factor.right != null)
+                        qu.add(factor.right);
+
+                    factor = factor.left;
+                }
+
+            }
+            res.add(list);
+        }
+        return res;
+    }
+
+    // Iterative inorder tree
+    class BSTIterator {
+        class Pair {
+            TreeNode node;
+            int state;
+
+            Pair(TreeNode node, int state) {
+                this.node = node;
+                this.state = state;
+            }
+
+        }
+
+        private Stack<Pair> st;
+        private int itr_val = -1;
+
+        public BSTIterator(TreeNode root) {
+            st = new Stack<>();
+            st.push(new Pair(root, 0));
+            next();
+
+        }
+
+        public int next() {
+            int val2 = itr_val;
+            itr_val = -1;
+            while (st.size() > 0) {
+                Pair top = st.peek();
+                if (top.state == 0) {
+                    if (top.node.left != null)
+                        st.push(new Pair(top.node.left, 0));
+                    top.state++;
+
+                } else if (top.state == 1) {
+                    if (top.node.right != null) {
+                        st.push(new Pair(top.node.right, 0));
+                    }
+                    top.state++;
+                    itr_val = top.node.val;
+                    break;
+
+                } else {
+                    st.pop();
+                }
+
+            }
+            return val2;
+
+        }
+
+        public boolean hasNext() {
+            if (itr_val == -1)
+                return false;
+            else
+                return true;
+
+        }
+    }
+
+    // Another Method
+
+    class BSTIterator2 {
+        class Pair {
+            TreeNode node;
+            int state;
+
+            Pair(TreeNode node, int state) {
+                this.node = node;
+                this.state = state;
+            }
+
+        }
+
+        private Stack<TreeNode> st;
+
+        private void addAllLeft(TreeNode node) {
+            while (node != null) {
+                st.push(node);
+                node = node.left;
+            }
+        }
+
+        public BSTIterator2(TreeNode root) {
+            st = new Stack<>();
+            addAllLeft(root);
+
+        }
+
+        public int next() {
+            TreeNode remove = st.pop();
+
+            if (remove.right != null)
+                addAllLeft(remove.right);
+
+            return remove.val;
+
+        }
+
+        public boolean hasNext() {
+            return st.size() != 0;
+
+        }
+    }
+
+    // Root to all leaf
+
+    private static void helper(TreeNode node, ArrayList<ArrayList<Integer>> res, ArrayList<Integer> subres) {
+
+        if (node == null)
+            return;
+
+        if (node.left == null && node.right == null) {
+            ArrayList<Integer> duplicate = new ArrayList<>();
+            for (int val : subres) {
+                duplicate.add(val);
+            }
+            duplicate.add(node.val);
+            res.add(duplicate);
+            return;
+        }
+
+        subres.add(node.val);
+
+        helper(node.left, res, subres);
+        helper(node.right, res, subres);
+
+        subres.remove(subres.size() - 1);
+
+    }
+
+    public static ArrayList<ArrayList<Integer>> rootToAllLeafPath(TreeNode root) {
+        // write your code.
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        ArrayList<Integer> subres = new ArrayList<>();
+        helper(root, res, subres);
+        return res;
+
+    }
+
+    // Single Child Parent
+    public static void helper(TreeNode root, ArrayList<Integer> ans) {
+        if (root == null || (root.left == null && root.right == null))
+            return;
+
+        if (root.left == null || root.right == null)
+            ans.add(root.val);
+
+        helper(root.left, ans);
+        helper(root.right, ans);
+    }
+
+    public static ArrayList<Integer> exactlyOneChild(TreeNode root) {
+        ArrayList<Integer> ans = new ArrayList<>();
+        helper(root, ans);
+        return ans;
+    }
+
     public static void main(String[] args) {
 
     }
