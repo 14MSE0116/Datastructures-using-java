@@ -310,8 +310,9 @@ public class trees {
 
     }
 
+    trees.Node prev;
     // leetcode 9-https://leetcode.com/problems/recover-binary-search-tree/
-    static TreeNode prev, curr, a, b;
+    static TreeNode curr, a, b;
 
     // pointers[0]=prev,1=curr,2=a,3=b
     public static void recover_tree(TreeNode root, TreeNode[] pointers) {
@@ -955,6 +956,276 @@ public class trees {
         helper(root, ans);
         return ans;
     }
+
+    static ArrayList<ArrayList<Integer>> res;
+
+    public static ArrayList<ArrayList<Integer>> pathSum(TreeNode root, int targetSum) {
+        res = new ArrayList<>();
+        ArrayList<Integer> list = new ArrayList<>();
+        dfs(root, targetSum, list);
+        return res;
+    }
+
+    public static void dfs(TreeNode root, int target, ArrayList<Integer> list) {
+        if (root == null)
+            return;
+
+        list.add(root.val);
+        target -= root.val;
+        if (root.left == null && root.right == null) {
+            if (target == 0) {
+                res.add(new ArrayList<>(list));
+                return;
+            }
+
+        }
+        dfs(root.left, target, list);
+        dfs(root.right, target, list);
+        list.remove(list.size() - 1);
+
+    }
+
+    // diameter of binary trees
+    // Method 1
+    static int diameter;
+
+    public static int diameterOfBinaryTree(TreeNode root) {
+        diameter = 0;
+        height(root);
+        return diameter;
+    }
+
+    public static int height(TreeNode root) {
+        if (root == null) {
+            return -1;
+        }
+
+        int lchild = height(root.left);
+        int rchild = height(root.right);
+
+        diameter = Math.max(diameter, lchild + rchild + 2);
+        return Math.max(lchild, rchild) + 1;
+
+    }
+
+    // Method 2->Brute force
+    public static int diameterOfBinaryTree2(TreeNode root) {
+
+        int lh = height(root.left);
+        int rh = height(root.right);
+
+        int dfc = 0;
+        if (root.left != null)
+            dfc = Math.max(dfc, diameterOfBinaryTree2(root.left));
+
+        if (root.right != null)
+            dfc = Math.max(dfc, diameterOfBinaryTree2(root.right));
+
+        return Math.max(dfc, lh + rh + 2);
+
+    }
+
+    // Method 3->using pair class
+    public static DPair diameterOfBinaryTree3(TreeNode root) {
+
+        if (root == null) {
+            return new DPair(-1, 0);
+        }
+
+        DPair lh = diameterOfBinaryTree3(root.left);
+
+        DPair rh = diameterOfBinaryTree3(root.right);
+
+        DPair mres = new DPair();
+        mres.height = Math.max(lh.height, rh.height) + 1;
+        mres.diameter = Math.max(lh.height + rh.height + 2, Math.max(lh.diameter, rh.diameter));
+
+        return mres;
+
+    }
+
+    public static class DPair {
+        int height;
+        int diameter;
+
+        DPair() {
+            this.height = -1;
+            this.diameter = 0;
+        }
+
+        DPair(int height, int diameter) {
+            this.height = height;
+            this.diameter = diameter;
+        }
+    }
+
+    // max path sum 1
+    static int maxsum = 0;
+
+    public static int maxPathSum(TreeNode root) {
+        int sum = 0;
+
+        if (root.left != null && root.right != null) {
+            int lsum = maxPathSum(root.left);
+            int rsum = maxPathSum(root.right);
+            maxsum = Math.max(maxsum, lsum + rsum + root.val);
+            sum = Math.max(lsum, rsum) + root.val;
+        } else if (root.left != null) {
+            int lsum = maxPathSum(root.left);
+            sum = lsum + root.val;
+
+        } else if (root.right != null) {
+            int rsum = maxPathSum(root.right);
+            sum = rsum + root.val;
+
+        } else {
+            sum = root.val;
+
+        }
+        return sum;
+
+    }
+
+    private static ArrayList<TreeNode> nodeToRootPathNodeType(TreeNode node, int data) {
+        ArrayList<TreeNode> mres = new ArrayList<>();
+        if (node == null)
+            return mres;
+
+        if (node.val == data) {
+            mres.add(node);
+            return mres;
+        }
+
+        ArrayList<TreeNode> lres = nodeToRootPathNodeType(node.left, data);
+        if (lres.size() > 0) {
+            lres.add(node);
+            return lres;
+        }
+        ArrayList<TreeNode> rres = nodeToRootPathNodeType(node.right, data);
+        if (rres.size() > 0) {
+            rres.add(node);
+            return rres;
+        }
+        return mres;
+    }
+
+    // Burning Tree
+    static int maxtime;
+
+    public static int burningTree(TreeNode root, int fireNode) {
+        ArrayList<TreeNode> n2rp = nodeToRootPathNodeType(root, fireNode);
+        maxtime = 0;
+        TreeNode blockage = null;
+        for (int t = 0; t < n2rp.size(); t++) {
+            TreeNode node = n2rp.get(t);
+            burningtree_(node, blockage, t);
+            blockage = node;
+        }
+        return maxtime;
+
+    }
+
+    public static void burningtree_(TreeNode node, TreeNode block, int time) {
+        if (node == null || node == block)
+            return;
+
+        maxtime = Math.max(maxtime, time);
+        burningtree_(node.left, block, time + 1);
+        burningtree_(node.right, block, time + 1);
+    }
+
+    // Burning Tree 2
+
+    public static void burningtree_1(TreeNode node, TreeNode block, int time, ArrayList<ArrayList<Integer>> res) {
+        if (node == null || node == block)
+            return;
+
+        if (time < res.size())
+            res.get(time).add(node.val);
+        else {
+            ArrayList<Integer> subres = new ArrayList<>();
+            subres.add(node.val);
+            res.add(subres);
+        }
+        burningtree_1(node.left, block, time + 1, res);
+        burningtree_1(node.right, block, time + 1, res);
+    }
+
+    public static ArrayList<ArrayList<Integer>> burningTree2(TreeNode root, int data) {
+        ArrayList<TreeNode> n2rp = nodeToRootPathNodeType(root, data);
+
+        TreeNode blockage = null;
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        for (int t = 0; t < n2rp.size(); t++) {
+            TreeNode node = n2rp.get(t);
+            burningtree_1(node, blockage, t, res);
+            blockage = node;
+        }
+        return res;
+
+    }
+
+    //leetcode 662https://leetcode.com/problems/maximum-width-of-binary-tree/
+    class Wpair{
+        TreeNode  node;
+        int idx;
+        public Wpair(TreeNode node,int idx){
+            this.node=node;
+            this.idx=idx;
+        }
+    }
+
+    public int widthOfBinaryTree(TreeNode root) {
+        Queue<Wpair>qu=new LinkedList<>();
+        qu.add(new Wpair(root,0));
+        int   maxwidth=0;
+
+        while(qu.size()>0){
+            int sz=qu.size();
+            int lm=qu.peek().idx;
+            int  rm=qu.peek().idx;
+            while(sz-- >0){
+                Wpair rem=qu.remove();
+
+                rm=rem.idx;
+                if(rem.node.left!=null)
+                 qu.add(new  Wpair(rem.node.left,2*rem.idx+1));
+
+                 if(rem.node.right!=null)
+                 qu.add(new Wpair(rem.node.right,2*rem.idx+2));
+            }
+            //width of current level
+            int width=rm-lm+1;
+            //maximise  overall width
+            maxwidth=Math.max(maxwidth, width);
+        }
+        return  maxwidth;
+
+        
+    }
+
+    //BST to DLL
+    static Node prevv=null;
+    public static Node bToDLL(Node root) {
+        Node  dummy=new Node(-1);
+        prevv=dummy;
+        btoDLL(root);
+        Node head=dummy.right;
+        head.left=prevv;
+        prevv.right=head;
+        return head;
+        
+
+
+      }
+
+      public static  void  btoDLL(Node  root){
+        btoDLL(root.left);
+        prevv.right=root;
+        root.left=prevv;
+        prevv=root;
+        btoDLL(root.right);
+      }
 
     public static void main(String[] args) {
 
