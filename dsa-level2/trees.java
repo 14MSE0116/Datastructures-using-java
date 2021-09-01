@@ -1,5 +1,7 @@
 import java.util.*;
 
+import org.graalvm.compiler.core.common.NumUtil;
+
 public class trees {
     public static class TreeNode {
         int val;
@@ -1165,67 +1167,162 @@ public class trees {
 
     }
 
-    //leetcode 662https://leetcode.com/problems/maximum-width-of-binary-tree/
-    class Wpair{
-        TreeNode  node;
+    // leetcode 662https://leetcode.com/problems/maximum-width-of-binary-tree/
+    class Wpair {
+        TreeNode node;
         int idx;
-        public Wpair(TreeNode node,int idx){
-            this.node=node;
-            this.idx=idx;
+
+        public Wpair(TreeNode node, int idx) {
+            this.node = node;
+            this.idx = idx;
         }
     }
 
     public int widthOfBinaryTree(TreeNode root) {
-        Queue<Wpair>qu=new LinkedList<>();
-        qu.add(new Wpair(root,0));
-        int   maxwidth=0;
+        Queue<Wpair> qu = new LinkedList<>();
+        qu.add(new Wpair(root, 0));
+        int maxwidth = 0;
 
-        while(qu.size()>0){
-            int sz=qu.size();
-            int lm=qu.peek().idx;
-            int  rm=qu.peek().idx;
-            while(sz-- >0){
-                Wpair rem=qu.remove();
+        while (qu.size() > 0) {
+            int sz = qu.size();
+            int lm = qu.peek().idx;
+            int rm = qu.peek().idx;
+            while (sz-- > 0) {
+                Wpair rem = qu.remove();
 
-                rm=rem.idx;
-                if(rem.node.left!=null)
-                 qu.add(new  Wpair(rem.node.left,2*rem.idx+1));
+                rm = rem.idx;
+                if (rem.node.left != null)
+                    qu.add(new Wpair(rem.node.left, 2 * rem.idx + 1));
 
-                 if(rem.node.right!=null)
-                 qu.add(new Wpair(rem.node.right,2*rem.idx+2));
+                if (rem.node.right != null)
+                    qu.add(new Wpair(rem.node.right, 2 * rem.idx + 2));
             }
-            //width of current level
-            int width=rm-lm+1;
-            //maximise  overall width
-            maxwidth=Math.max(maxwidth, width);
+            // width of current level
+            int width = rm - lm + 1;
+            // maximise overall width
+            maxwidth = Math.max(maxwidth, width);
         }
-        return  maxwidth;
+        return maxwidth;
 
-        
     }
 
-    //BST to DLL
-    static Node prevv=null;
+    // BST to DLL
+    static Node prevv = null;
+
     public static Node bToDLL(Node root) {
-        Node  dummy=new Node(-1);
-        prevv=dummy;
+        Node dummy = new Node(-1);
+        prevv = dummy;
         btoDLL(root);
-        Node head=dummy.right;
-        head.left=prevv;
-        prevv.right=head;
+        Node head = dummy.right;
+        head.left = prevv;
+        prevv.right = head;
         return head;
-        
 
+    }
 
-      }
-
-      public static  void  btoDLL(Node  root){
+    public static void btoDLL(Node root) {
         btoDLL(root.left);
-        prevv.right=root;
-        root.left=prevv;
-        prevv=root;
+        prevv.right = root;
+        root.left = prevv;
+        prevv = root;
         btoDLL(root.right);
-      }
+    }
+
+    // Convert sorted DLL into BST
+    public static Node SortedDLLToBST(Node head) {
+        Node root = creationBST(head);
+
+        return root;
+    }
+
+    public static Node creationBST(Node head) {
+        if (head == null)
+            return null;
+
+        Node mid = getMidl(head);
+
+        if (mid.left != null) {
+            mid.left.right = null;
+            mid.left = null;
+
+        }
+        Node head2 = mid.right;
+        if (mid.right != null) {
+            mid.right.left = null;
+            mid.right = null;
+        }
+
+        if (mid != head) {
+            mid.left = creationBST(head);
+            mid.right = creationBST(head2);
+        }
+        return mid;
+    }
+
+    private static Node getMidl(Node head) {
+        Node slow = head;
+        Node fast = head.right;
+        while (fast != null && fast.right != null) {
+            slow = slow.right;
+            fast = fast.right.right;
+        }
+        return slow;
+    }
+
+    // Path sum in binary tree
+    public boolean hasPathSum(TreeNode root, int targetSum) {
+        if (root == null)
+            return false;
+        targetSum -= root.val;
+        if (root.left == null && root.right == null) {
+            if (targetSum == 0)
+                return true;
+        }
+
+        if (hasPathSum(root.left, targetSum))
+            return true;
+        if (hasPathSum(root.right, targetSum))
+            return true;
+
+        return false;
+
+    }
+
+    //LCA binray tree
+    static  TreeNode lca=null;
+    public static TreeNode lowestCommonAncestor(TreeNode node, int p, int q) {
+        lca=null;
+        solveLCA(node,p,q);
+        return  lca;
+
+    }
+
+    private  static  boolean solveLCA(TreeNode  node,int data1,int data2){
+        if(node==null)
+         return  false;
+        boolean self=node.val==data1 || node.val==data2;
+
+        boolean  left=solveLCA(node.left, data1, data2);
+        boolean right=solveLCA(node.right, data1, data2);
+
+        if((self && left)||(self &&  right)||  (left && right)){
+            lca=node;
+        }
+        return self||left||right;
+    }
+
+    //max path sum
+     static int  maxpath=0;
+     private int maxpathsum_(TreeNode root){
+         if(root==null)
+          return (int)-1e9;
+
+          int lsum=maxpathsum_(root.left);
+          int rsum=maxpathsum_(root.right);
+          int val=Math.max(root.val, Math.max(root.val+lsum, root.val+rsum));
+          maxpath=Math.max(maxpath,Math.max(val, lsum+root.val+rsum));
+          return  val;
+     }
 
     public static void main(String[] args) {
 
