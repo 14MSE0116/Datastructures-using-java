@@ -545,6 +545,130 @@ public class array {
 
     }
 
+    // Max. swaps required to get greatest number
+    // leetcode 670
+    public int maximumSwap(int n) {
+        // convert number to sstring
+        String num = n + "";
+        char[] arr = num.toCharArray();
+        int[] lastidx = new int[10];
+        // Travel and Fill Last Index of digits
+        for (int i = 0; i < arr.length; i++) {
+            lastidx[arr[i] - '0'] = i;
+        }
+
+        // Travel and find swapping point
+        for (int i = 0; i < arr.length; i++) {
+            int digit = arr[i] - '0';
+            int idx = i;
+            for (int j = 9; j > digit; j--) {
+                if (lastidx[j] > i) {
+                    idx = lastidx[j];
+                    break;
+
+                }
+            }
+            if (idx != i) {
+                swap(arr, i, idx);
+                break;
+            }
+
+        }
+        String res = String.valueOf(arr);
+        return Integer.parseInt(res);
+
+    }
+
+    // Leetcode 537->Commplex number multiplication
+    public static String complexNumberMultiply(String num1, String num2) {
+        // write your code here
+        int a1 = Integer.parseInt(num1.substring(0, num1.indexOf("+")));
+        int b1 = Integer.parseInt(num1.substring(num1.indexOf("+") + 1, num1.length() - 1));
+
+        int a2 = Integer.parseInt(num2.substring(0, num2.indexOf("+")));
+        int b2 = Integer.parseInt(num2.substring(num2.indexOf("+") + 1, num2.length() - 1));
+
+        int a = a1 * a2 - b1 * b2;
+        int b = a1 * b2 + a2 * b1;
+        return a + "+" + b + "i";
+
+    }
+
+    // Two sum pairs
+    public static List<List<Integer>> twoSum(int[] arr, int target) {
+        // write your code here
+        List<List<Integer>> res = new ArrayList<>();
+        Arrays.sort(arr);
+        int l = 0;
+        int r = arr.length - 1;
+        while (l < r) {
+            if (l != 0 && arr[l] == arr[l - 1]) {
+                l++;
+                continue;
+            }
+            int sum = arr[l] + arr[r];
+            if (sum < target) {
+                l++;
+            } else if (sum > target)
+                r--;
+            else {
+                List<Integer> list = new ArrayList<>();
+                list.add(arr[l]);
+                list.add(arr[r]);
+                res.add(list);
+                l++;
+                r--;
+            }
+        }
+
+        return res;
+    }
+
+    // 3 sum
+    public static List<List<Integer>> threeSum(int[] nums, int tar) {
+        // write your code here
+        List<List<Integer>> res = new ArrayList<>();
+        Arrays.sort(nums);
+        for (int i = 0; i <= nums.length - 3; i++) {
+            if (i != 0 && nums[i] == nums[i - 1])
+                continue;
+            int val = nums[i];
+            int target = tar - val;
+            List<List<Integer>> subres = twosum(nums, i + 1, nums.length - 1, target);
+            for (List<Integer> list : subres) {
+                list.add(0, val);
+                res.add(list);
+            }
+        }
+        return res;
+
+    }
+
+    public static List<List<Integer>> twosum(int[] nums, int lo, int hi, int tar) {
+        int l = lo;
+        int r = hi;
+        List<List<Integer>> res = new ArrayList<>();
+        while (l < r) {
+            if (l != lo && nums[l] == nums[l - 1]) {
+                l++;
+                continue;
+            }
+            int sum = nums[l] + nums[r];
+            if (sum == tar) {
+                List<Integer> list = new ArrayList<>();
+                list.add(nums[l]);
+                list.add(nums[r]);
+                res.add(list);
+                l++;
+                r--;
+            } else if (sum > tar)
+                r--;
+            else
+                l++;
+        }
+        return res;
+    }
+
     public static void main(String[] args) {
 
     }
