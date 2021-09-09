@@ -669,6 +669,107 @@ public class array {
         return res;
     }
 
+    // K sum-Target
+    public static List<List<Integer>> kSum(int[] arr, int target, int k) {
+        // write your code here
+        Arrays.sort(arr);
+        List<List<Integer>> res = ksum_(arr, target, 0, k);
+        return res;
+    }
+
+    private static List<List<Integer>> ksum_(int arr[], int target, int si, int k) {
+        if (k == 2) {
+            return twosum(arr, si, arr.length - 1, target);
+        }
+        int n = arr.length;
+        List<List<Integer>> res = new ArrayList<>();
+        for (int i = si; i < n - (k - 1); i++) {
+            if (i != si && arr[i] == arr[i - 1])
+                continue;
+            int val1 = arr[i];
+            int targ = target - val1;
+            List<List<Integer>> subres = ksum_(arr, targ, i + 1, k - 1);
+            for (List<Integer> list : subres) {
+                list.add(val1);
+                res.add(list);
+            }
+        }
+        return res;
+    }
+
+    // sieve of eranthosis
+    public static void printPrimeUsingSieve(int n) {
+        // write your code here
+        boolean prime[] = new boolean[n + 1];
+        Arrays.fill(prime, true);
+        prime[1] = false;
+
+        for (int i = 2; i * i <= n; i++) {
+            if (prime[i] == true) {
+                for (int j = i * 2; j <= n; j = j + i) {
+                    prime[j] = false;
+                }
+            }
+        }
+
+        for (int i = 2; i <= n; i++) {
+            if (prime[i] == true)
+                System.out.print(i + " ");
+        }
+    }
+
+    // Segmented sieve
+
+    public static void segmentedSieveAlgo(int a, int b) {
+        // write your code here
+        int rootb = (int) Math.sqrt(b);
+        ArrayList<Integer> primes = sieve(rootb);
+        // prime[i]=false,then i is prime
+        boolean[] isprime = new boolean[b - a + 1];
+        for (int prime : primes) {
+            int mutliple = (int) Math.ceil((a * 1.0) / prime);
+            if (mutliple == 1)
+                mutliple++;
+
+            int si = mutliple * prime - a;
+            for (int j = si; j < isprime.length; j += prime) {
+                isprime[j] = true;
+            }
+
+        }
+        for (int i = 0; i < isprime.length; i++) {
+            if (isprime[i] == false && i + a != 1) {
+                // val=idex+base
+                int val = i + a;
+                System.out.println(val);
+            }
+        }
+
+    }
+
+    private static ArrayList<Integer> sieve(int n) {
+        boolean prime[] = new boolean[n + 1];
+
+        for (int i = 2; i * i <= n; i++) {
+            if (prime[i] == true) {
+                continue;
+            }
+            for (int j = i * 2; j <= n; j = j + i) {
+                prime[j] = true;
+            }
+
+        }
+        ArrayList<Integer> ans = new ArrayList<>();
+
+        for (int i = 2; i <= n; i++) {
+            if (prime[i] == false)
+                ans.add(i);
+        }
+        return ans;
+    }
+
+    // Find Pair Given Difference
+
     public static void main(String[] args) {
 
     }
