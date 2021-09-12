@@ -768,7 +768,120 @@ public class array {
         return ans;
     }
 
-    // Find Pair Given Difference
+    // Push Dominoes
+    public String pushDominoes(String dominoes) {
+        int l = dominoes.length();
+        char[] arr = new char[l + 2];
+        arr[0] = 'L';
+        arr[l + 1] = 'R';
+
+        for (int i = 1; i <= l; i++) {
+            arr[i] = dominoes.charAt(i - 1);
+        }
+
+        int i = 0;
+        int j = 1;
+        while (j < arr.length) {
+            while (arr[j] == '.')
+                j++;
+
+            if (j - i > 1) {
+                solveConfig(arr, i, j);
+
+            }
+            i = j;
+            j++;
+        }
+        StringBuilder res = new StringBuilder();
+
+        for (int k = 1; k <= l; k++)
+            res.append(arr[k]);
+
+        return res.toString();
+
+    }
+
+    static void solveConfig(char arr[], int i, int j) {
+        if (arr[i] == 'L' && arr[j] == 'L') {
+            for (int k = i + 1; k < j; k++)
+                arr[k] = 'L';
+        } else if (arr[i] == 'R' && arr[j] == 'R') {
+            for (int k = i + 1; k < j; k++)
+                arr[k] = 'R';
+        } else if (arr[i] == 'L' && arr[j] == 'R') {
+            // nothing to do
+        } else if (arr[i] == 'R' && arr[j] == 'L') {
+            i++;
+            j--;
+            while (i < j) {
+                arr[i] = 'R';
+                arr[j] = 'L';
+                i++;
+                j--;
+            }
+
+        }
+    }
+    // Consecutive Numbers sum
+
+    public int consecutiveNumbersSum(int n) {
+
+        int count = 0;
+        for (int k = 1; k * (k - 1) < 2 * n; k++) {
+            int num = n - (k * (k - 1)) / 2;
+            if (num % k == 0)
+                count++;
+        }
+        return count;
+
+    }
+
+    // Leetcode 754->Reach a number using +ve or -ve jumps
+    public int reachNumber(int target) {
+        target = Math.abs(target);
+        int jump = 0;
+        int s = 0;
+        while (s < target) {
+            jump++;
+            s += jump;
+
+        }
+        if (s == target)
+            return jump;
+        else if ((s - target) % 2 == 0)
+            return jump;
+        else if ((s + jump + 1 - target) % 2 == 0)
+            return jump + 1;
+        else
+            return jump + 2;
+    }
+
+    //Partition labels of String
+    public List<Integer> partitionLabels(String s) {
+        //1.Make  HashMap of last  occurence
+        HashMap<Character,Integer>map=new HashMap<>();
+        for(int i=0;i<s.length();i++){
+            char ch=s.charAt(i);
+                //update  idx
+                map.put(ch,i);
+        }
+
+        //2.Solve using   chaining technique
+        List<Integer>res=new ArrayList<>();
+        int prev=0;
+        int max=0;
+        for(int i=0;i<s.length();i++){
+            char  ch=s.charAt(i);
+
+            max=Math.max(max, map.get(ch));
+            if(max==i){
+                res.add(i-prev+1);
+                prev=i+1;
+            }
+        }
+        return  res;
+       
+    }
 
     public static void main(String[] args) {
 
