@@ -856,31 +856,200 @@ public class array {
             return jump + 2;
     }
 
-    //Partition labels of String
+    // Partition labels of String
     public List<Integer> partitionLabels(String s) {
-        //1.Make  HashMap of last  occurence
-        HashMap<Character,Integer>map=new HashMap<>();
-        for(int i=0;i<s.length();i++){
-            char ch=s.charAt(i);
-                //update  idx
-                map.put(ch,i);
+        // 1.Make HashMap of last occurence
+        HashMap<Character, Integer> map = new HashMap<>();
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            // update idx
+            map.put(ch, i);
         }
 
-        //2.Solve using   chaining technique
-        List<Integer>res=new ArrayList<>();
-        int prev=0;
-        int max=0;
-        for(int i=0;i<s.length();i++){
-            char  ch=s.charAt(i);
+        // 2.Solve using chaining technique
+        List<Integer> res = new ArrayList<>();
+        int prev = 0;
+        int max = 0;
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
 
-            max=Math.max(max, map.get(ch));
-            if(max==i){
-                res.add(i-prev+1);
-                prev=i+1;
+            max = Math.max(max, map.get(ch));
+            if (max == i) {
+                res.add(i - prev + 1);
+                prev = i + 1;
             }
         }
-        return  res;
-       
+        return res;
+
+    }
+
+    // Number of boats required to save people
+    public int numRescueBoats(int[] people, int limit) {
+        int boats = 0;
+        Arrays.sort(people);
+        int l = 0;
+        int r = people.length - 1;
+        while (l <= r) {
+            int sum = people[l] + people[r];
+            if (sum <= limit) {
+                l++;
+                r--;
+
+            } else {
+                r--;
+            }
+            boats++;
+        }
+        return boats;
+
+    }
+
+    // Print subarray with sum
+    public int maxSubArray(int[] nums) {
+        int csum = 0;
+        int max = Integer.MIN_VALUE;
+        int ost = 0;
+        int oend = 0;
+        int st = 0;
+        int end = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (csum < 0) {
+                csum = nums[i];
+                st = i;
+            } else {
+                csum += nums[i];
+                end = i;
+            }
+            if (csum > max) {
+                max = csum;
+                ost = st;
+                oend = end;
+            }
+        }
+
+        for (int i = ost; i <= oend; i++)
+            System.out.print(nums[i] + " ");
+        return max;
+    }
+
+    // Merge Intervals
+    public static int[][] mergeIntervals(int Intervals[][]) {
+        // write your code here
+        if (Intervals.length == 0)
+            return new int[0][0];
+        Pair pairs[] = new Pair[Intervals.length];
+        for (int i = 0; i < Intervals.length; i++) {
+            pairs[i] = new Pair(Intervals[i][0], Intervals[i][1]);
+        }
+        Arrays.sort(pairs);
+
+        Stack<Pair> st = new Stack<>();
+        st.push(pairs[0]);
+
+        for (int i = 1; i < pairs.length; i++) {
+            Pair rem = pairs[i];
+            if (rem.st < st.peek().end) {
+                if (rem.end > st.peek().end) {
+                    st.peek().end = rem.end;
+                }
+            } else {
+                st.push(rem);
+            }
+        }
+
+        int[][] res = new int[st.size()][2];
+        Stack<Pair> ans = new Stack<>();
+        while (st.size() > 0) {
+            ans.push(st.pop());
+        }
+        int i = 0;
+        while (ans.size() > 0) {
+            res[i][0] = ans.peek().st;
+            res[i][1] = ans.peek().end;
+            i++;
+            ans.pop();
+        }
+        return res;
+    }
+
+    static class Pair implements Comparable<Pair> {
+
+        int st;
+        int end;
+
+        Pair(int st, int end) {
+            this.st = st;
+            this.end = end;
+        }
+
+        public int compareTo(Pair o) {
+            return this.st - o.st;
+        }
+
+    }
+
+    // Meeting room1-
+    public static boolean canAttendMeetings(List<Interval> intervals) {
+        // Write your code here
+        if (intervals.size() == 0)
+            return true;
+        Collections.sort(intervals, (a, b) -> Integer.compare(a.start, b.start));
+        int lsp = intervals.get(0).start;
+        int lep = intervals.get(0).end;
+        for (int i = 1; i < intervals.size(); i++) {
+            int sp = intervals.get(i).start;
+            int ep = intervals.get(i).end;
+            if (lep <= sp) {
+                lsp = sp;
+                lep = ep;
+            } else
+                return false;
+        }
+        return true;
+
+    }
+
+    // Meeting rooms2
+    // https://www.lintcode.com/problem/919/
+    public int minMeetingRooms(List<Interval> intervals) {
+        // Write your code here
+        int n=intervals.size();
+        int  []start=new  int[n];
+        int end[]=new int[n];
+        for(int i =0;i<n;i++){
+            start[i]=intervals.get(i).start;
+            end[i]=intervals.get(i).end;
+        }
+
+        Arrays.sort(start);
+        Arrays.sort(end);
+
+        int cmax=0;
+        int max_room=0; 
+        int i=0;
+        int j=0;
+        while(i<n){
+            if(start[i]<end[j]){
+                cmax++;
+                i++;
+            }
+            else{
+                cmax--;
+                j++;
+            }
+            max_room=Math.max(max_room,cmax);
+        }
+        return max_room;
+
+    }
+
+    public static class Interval {
+        int start, end;
+
+        Interval(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
     }
 
     public static void main(String[] args) {
