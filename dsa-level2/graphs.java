@@ -1,3 +1,4 @@
+import java.nio.file.Path;
 import java.util.*;
 
 import array.pair;
@@ -491,14 +492,12 @@ public class graphs {
                     qu.add(nbr);
             }
 
-           
-
         }
         return count == n;
 
     }
 
-    //course schedule 2
+    // course schedule 2
     public int[] findOrder(int n, int[][] edges) {
         ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
         for (int i = 0; i < n; i++) {
@@ -525,7 +524,7 @@ public class graphs {
         }
 
         int count = 0;
-        Stack<Integer>st=new Stack<>();
+        Stack<Integer> st = new Stack<>();
         while (qu.size() > 0) {
             // 1.get+remove
             int rem = qu.remove();
@@ -541,19 +540,223 @@ public class graphs {
                     qu.add(nbr);
             }
 
-           
-
         }
-        if(count==n){
-            int []res=new int[0];
+        if (count == n) {
+            int[] res = new int[0];
+            return res;
+        } else {
+            int idx = 0;
+            int res[] = new int[count];
+            while (st.size() > 0)
+                res[idx++] = st.pop();
             return res;
         }
-        else{
-            int idx=0;
-            int res[]=new int[count];
-            while(st.size()>0)
-              res[idx++]=st.pop();
-            return res;  
+    }
+
+    // bellman ford
+    private static int[] bellmanFord(int n, int[][] edges) {
+        int[] path = new int[n];
+        Arrays.fill(path, Integer.MAX_VALUE);
+        path[0] = 0;
+        for (int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            int wt = edge[2];
+            if (path[u] != Integer.MAX_VALUE && path[u] + wt < path[v]) {
+                path[v] = path[u] + wt;
+            }
+        }
+        return path;
+    }
+
+    // negative weight cycle present in graph
+    private static int isNegativeCyclePresent(int n, int[][] edges) {
+        int[] path = new int[n];
+        Arrays.fill(path, Integer.MAX_VALUE);
+        path[0] = 0;
+        for (int i = 0; i < n - 1; i++) {
+            for (int[] edge : edges) {
+                int u = edge[0];
+                int v = edge[1];
+                int wt = edge[2];
+                if (path[u] != Integer.MAX_VALUE && path[u] + wt < path[v]) {
+                    path[v] = path[u] + wt;
+                }
+            }
+        }
+        for (int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            int wt = edge[2];
+            if (path[u] != Integer.MAX_VALUE && path[u] + wt < path[v]) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    // remove maximum number of edges
+    private int find4Edge(int x, int[] parent) {
+        if (parent[x] == x) {
+            return x;
+        }
+        int temp = find4Edge(parent[x], parent);
+        parent[x] = temp;
+        return temp;
+    }
+
+    private boolean unionEdge(int x, int y, int[] parent, int[] rank) {
+        int lx = find4Edge(x, parent);
+        int ly = find4Edge(y, parent);
+
+        if (lx == ly) {
+            return false;
+        } else {
+            if (rank[lx] > rank[ly]) {
+                parent[ly] = lx;
+            } else if (rank[lx] < rank[ly]) {
+                parent[lx] = ly;
+            } else {
+                parent[ly] = lx;
+                rank[lx]++;
+            }
+        }
+        return true;
+    }
+
+    public int maxNumEdgesToRemove(int n, int[][] edges) {
+        Arrays.sort(edges, (a, b) -> {
+            return -Integer.compare(a[0], b[0]);
+        });
+
+        int mergea = 1;
+        int mergeb = 1;
+        int removeEdge = 0;
+
+        int[] parenta = new int[n + 1];
+        int[] parentb = new int[n + 1];
+        int[] ranka = new int[n + 1];
+        int[] rankb = new int[n + 1];
+
+        for (int i = 0; i <= n; i++) {
+            parenta[i] = i;
+            parentb[i] = i;
+            ranka[i] = 1;
+            rankb[i] = 1;
+        }
+
+        for (int[] edge : edges) {
+            if (edge[0] == 3) {
+                boolean tempa = unionEdge(edge[1], edge[2], parenta, ranka);
+                boolean tempb = unionEdge(edge[1], edge[2], parentb, rankb);
+                if (tempa == true) {
+                    mergea++;
+                }
+                if (tempb == true) {
+                    mergeb++;
+                }
+                if (tempa == false && tempb == false) {
+                    removeEdge++;
+                }
+            } else if (edge[0] == 1) {
+                boolean tempa = unionEdge(edge[1], edge[2], parenta, ranka);
+                if (tempa == true) {
+                    mergea++;
+                } else {
+                    removeEdge++;
+                }
+            } else {
+                boolean tempb = unionEdge(edge[1], edge[2], parentb, rankb);
+                if (tempb == true) {
+                    mergeb++;
+                } else {
+                    removeEdge++;
+                }
+            }
+        }
+        if (mergea == n && mergeb == n) {
+            return removeEdge;
+        } else {
+            return -1;
+        }
+    }
+
+    // colour border-https://leetcode.com/problems/coloring-a-border/
+    public int[][] colorBorder(int[][] grid, int row, int col, int color) {
+        int n = grid.length;
+        int m = grid[0].length;
+        boolean vis[][] = new boolean[n][m];
+        dfs(grid, row, col, vis);
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] < 0) {
+                    grid[i][j] = color;
+                }
+            }
+        }
+        return grid;
+
+    }
+
+    static void dfs(int[][] grid, int x, int y, boolean vis[][]) {
+        int count = 0;
+        int val = grid[x][y];
+        vis[x][y] = true;
+        grid[x][y] *= -1;
+        for (int d = 0; d < 4; d++) {
+            int r = x + xdir[d];
+            int c = y + ydir[d];
+            if (r >= 0 && r < grid.length && c >= 0 && c < grid[0].length) {
+                if (grid[r][c] == val || grid[r][c] == -val) {
+                    count++;
+                }
+
+                if (grid[r][c] == val && vis[r][c] == false)
+                    dfs(grid, r, c, vis);
+            }
+        }
+        if (count == 4)
+            grid[x][y] *= -1;
+    }
+
+    // minimum number of swaps to make array sorted
+    public static int minSwaps(int[] arr1) {
+        Pair[] arr = new Pair[arr1.length];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = new Pair(arr1[i], i);
+        }
+        Arrays.sort(arr);
+        int ans = 0;
+        boolean vis[] = new boolean[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            if (vis[i] == true || arr[i].idx == i) {
+                continue;
+            }
+            int clen = 0;
+            int j = i;
+            while (vis[j] == false) {
+                vis[j] = true;
+                clen++;
+                j = arr[j].idx;
+            }
+            ans += clen - 1;
+
+        }
+        return ans;
+    }
+
+    private static class Pair implements Comparable<Pair> {
+        int val;
+        int idx;
+
+        Pair(int val, int idx) {
+            this.val = val;
+            this.idx = idx;
+        }
+
+        @Override
+        public int compareTo(Pair o) {
+            return this.val - o.val;
         }
     }
 
