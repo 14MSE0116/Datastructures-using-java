@@ -565,7 +565,7 @@ public class trees {
 
         Queue<WPair> qu = new LinkedList<>();
         qu.add(new WPair(root, 0));
-        HashMap<Integer, ArrayList<Integer>> map = new HashMap<>();
+        HashMapp<Integer, ArrayList<Integer>> map = new HashMapp<>();
         int lh = 0;
         int rh = 0;
 

@@ -456,7 +456,7 @@ public class linkedlist {
         ListNode head2 = copyLinkedList(head1);
 
         // 2.make hashmap of node vs node1
-        HashMap<ListNode, ListNode> map = new HashMap<>();
+        HashMapp<ListNode, ListNode> map = new HashMapp<>();
         ListNode t1 = head1;
         ListNode t2 = head2;
 

@@ -205,7 +205,7 @@ public class graphs {
     // https://leetcode.com/problems/bus-routes/
     public int numBusesToDestination(int[][] routes, int source, int target) {
 
-        HashMap<Integer, ArrayList<Integer>> map = new HashMap<>();
+        HashMapp<Integer, ArrayList<Integer>> map = new HashMapp<>();
         makemapwithstandandbus(routes, map);
         HashSet<Integer> visBus = new HashSet<>();
         HashSet<Integer> visStand = new HashSet<>();
@@ -242,7 +242,7 @@ public class graphs {
 
     }
 
-    static void makemapwithstandandbus(int[][] routes, HashMap<Integer, ArrayList<Integer>> map) {
+    static void makemapwithstandandbus(int[][] routes, HashMapp<Integer, ArrayList<Integer>> map) {
         for (int r = 0; r < routes.length; r++) {
             // r->bus no
             for (int c = 0; c < routes[r].length; c++) {
@@ -758,6 +758,14 @@ public class graphs {
         public int compareTo(Pair o) {
             return this.val - o.val;
         }
+    }
+
+    //Euler  Path  and Circuit
+    //https://practice.geeksforgeeks.org/problems/euler-circuit-and-path/1#
+    public int isEularCircuitExist(int V, ArrayList<ArrayList<Integer>> adj)
+    {
+        // Code here
+        
     }
 
     public static void main(String[] args) {

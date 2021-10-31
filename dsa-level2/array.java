@@ -859,7 +859,7 @@ public class array {
     // Partition labels of String
     public List<Integer> partitionLabels(String s) {
         // 1.Make HashMap of last occurence
-        HashMap<Character, Integer> map = new HashMap<>();
+        HashMapp<Character, Integer> map = new HashMapp<>();
         for (int i = 0; i < s.length(); i++) {
             char ch = s.charAt(i);
             // update idx
