@@ -1,7 +1,5 @@
 import java.util.*;
 
-import org.graalvm.compiler.core.common.NumUtil;
-
 public class trees {
     public static class TreeNode {
         int val;
