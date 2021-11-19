@@ -293,5 +293,193 @@ public class Sns {
         return sum <= th;
     }
 
+    //https://practice.geeksforgeeks.org/problems/allocate-minimum-number-of-pages0937/1
+    public static int minPages(int[] arr, int m) {
+        //write your code here
+        int lo;
+        int hi;
+        lo = -(int) 1e9;
+        hi = 0;
+        if (m > arr.length) return -1;
+        for (int i = 0; i < arr.length; i++) {
+            lo = Math.max(lo, arr[i]);
+            hi += arr[i];
+
+        }
+        int ans = -1;
+        while (lo <= hi) {
+            int mid = lo + (hi - lo) / 2;
+            if (isallocpossbile(arr, mid, m)) {
+
+                ans = mid;
+                hi = mid - 1;
+            } else
+                lo = mid + 1;
+        }
+        return ans;
+
+    }
+
+    static boolean isallocpossbile(int arr[], int mid, int pages) {
+        int cnt = 1;
+        int sum = 0;
+        for (int val : arr) {
+            sum += val;
+            if (sum > mid) {
+                cnt++;
+                sum = val;
+            }
+        }
+        return cnt <= pages;
+
+    }
+
+    //https://leetcode.com/problems/split-array-largest-sum/
+    public int splitArray(int[] nums, int m) {
+        int lo = -(int) 1e9;
+        int hi = 0;
+        for (int val : nums) {
+            lo = Math.max(lo, val);
+            hi += val;
+        }
+        int ans = -1;
+        while (lo <= hi) {
+            int mid = lo + (hi - lo) / 2;
+            if (issplitpossible(nums, mid, m)) {
+                ans = mid;
+                hi = mid - 1;
+            } else
+                lo = mid + 1;
+        }
+        return ans;
+
+    }
+
+    static boolean issplitpossible(int nums[], int mid, int m) {
+        int sum = 0;
+        int cnt = 1;
+        for (int val : nums) {
+            sum += val;
+            if (sum > mid) {
+                cnt++;
+                sum = val;
+            }
+        }
+        return cnt <= m;
+    }
+
+    //Count zeros in sorted matrix
+    public static int countZeros(int[][] mat) {
+        //write your code here
+        int count = 0;
+        int i = 0;
+        int j = mat[0].length - 1;
+        while (i < mat.length && j >= 0) {
+            if (mat[i][j] == 0) {
+                count += j + 1;
+                i++;
+            } else if (mat[i][j] == 1) {
+                j--;
+            }
+        }
+
+        return count;
+    }
+
+    //Counting Elements In Two Arrays
+    public static int[] findcount(int[] arr1, int[] arr2) {
+        //write your code here
+        int res[] = new int[arr1.length];
+        Arrays.sort(arr2);
+        int i = 0;
+        while (i < arr1.length) {
+            int val = arr1[i];
+            int idx = ceilidx(arr2, val);
+            res[i] = idx == -1 ? arr2.length : idx;
+            i++;
+        }
+        return res;
+    }
+
+    static int ceilidx(int arr[], int val) {
+        int lo = 0;
+        int hi = arr.length - 1;
+        int res = -1;
+        while (lo <= hi) {
+            int mid = lo + (hi - lo) / 2;
+            if (arr[mid] <= val) {
+                lo = mid + 1;
+            } else if (arr[mid] > val) {
+                res = mid;
+                hi = mid - 1;
+            }
+
+        }
+        return res;
+    }
+
+    //count pairs,portal
+    public static int countPairs(int[] arr) {
+        //write your code here
+        HashMap<Integer, Integer> map = new HashMap<>();
+        int count = 0;
+
+        for (int val : arr) {
+            map.put(val, map.getOrDefault(val, 0) + 1);
+        }
+
+        for (int key : map.keySet()) {
+            int k = map.get(key);
+            count += k * (k - 1) / 2;
+        }
+        return count;
+    }
+
+    //Facing the sun portal
+    public static int countBuildings(int[] ht) {
+        //write your code here
+        int max = -(int) 1e9;
+        int count = 0;
+        for (int val : ht) {
+            if (val > max) {
+                count++;
+                max = val;
+            }
+        }
+        return count;
+    }
+
+    //https://practice.geeksforgeeks.org/problems/distinct-absolute-array-elements4529/1
+    int distinctCount(int[] arr, int n) {
+        // code here
+        int prev=-(int)1e9;
+        int next=(int)1e9;
+        int i=0;
+        int j=arr.length-1;
+        int count=0;
+        while(i<=j){
+            if(Math.abs(arr[i])==Math.abs(arr[j])){
+                if(arr[i]!=prev && arr[j]!=next)
+                    count++;
+                prev=arr[i];
+                next=arr[j];
+                i++;
+                j--;
+            }
+            else if(Math.abs(arr[i])<Math.abs(arr[j])){
+                if(arr[j]!=next)
+                    count++;
+                next=arr[j];
+                j--;
+            }
+            else{
+                if(arr[i]!=prev)
+                    count++;
+                prev=arr[i];
+                i++;
+            }
+        }
+        return count;
+    }
 
 }
