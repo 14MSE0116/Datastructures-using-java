@@ -452,34 +452,178 @@ public class Sns {
     //https://practice.geeksforgeeks.org/problems/distinct-absolute-array-elements4529/1
     int distinctCount(int[] arr, int n) {
         // code here
-        int prev=-(int)1e9;
-        int next=(int)1e9;
-        int i=0;
-        int j=arr.length-1;
-        int count=0;
-        while(i<=j){
-            if(Math.abs(arr[i])==Math.abs(arr[j])){
-                if(arr[i]!=prev && arr[j]!=next)
+        int prev = -(int) 1e9;
+        int next = (int) 1e9;
+        int i = 0;
+        int j = arr.length - 1;
+        int count = 0;
+        while (i <= j) {
+            if (Math.abs(arr[i]) == Math.abs(arr[j])) {
+                if (arr[i] != prev && arr[j] != next)
                     count++;
-                prev=arr[i];
-                next=arr[j];
+                prev = arr[i];
+                next = arr[j];
                 i++;
                 j--;
-            }
-            else if(Math.abs(arr[i])<Math.abs(arr[j])){
-                if(arr[j]!=next)
+            } else if (Math.abs(arr[i]) < Math.abs(arr[j])) {
+                if (arr[j] != next)
                     count++;
-                next=arr[j];
+                next = arr[j];
                 j--;
-            }
-            else{
-                if(arr[i]!=prev)
+            } else {
+                if (arr[i] != prev)
                     count++;
-                prev=arr[i];
+                prev = arr[i];
                 i++;
             }
         }
         return count;
     }
+
+    //portal question
+    public static int findSingleElement(int[] arr) {
+        //write your code here
+        int idx = -1;
+        int lo = 0;
+        int hi = arr.length - 1;
+        while (lo <= hi) {
+            int mid = lo + (hi - lo) / 2;
+            if (mid == 0 || mid == arr.length - 1) {
+                idx = mid;
+                break;
+            } else if (arr[mid] != arr[mid - 1] && arr[mid] != arr[mid + 1]) {
+                idx = mid;
+                break;
+            } else if (arr[mid] == arr[mid + 1]) {
+                if ((hi - mid + 1) % 2 == 0) {
+                    hi = mid - 1;
+                } else {
+                    lo = mid;
+                }
+            } else {
+                if ((mid - lo + 1) % 2 == 0) {
+                    lo = mid + 1;
+                } else {
+                    hi = mid;
+                }
+
+            }
+        }
+        return arr[idx];
+    }
+
+    //https://leetcode.com/problems/largest-perimeter-triangle/
+    public int largestPerimeter(int[] nums) {
+        Arrays.sort(nums);
+        int a = 0;
+        int b = 0;
+        int c = 0;
+        int idx = nums.length - 3;
+        while (idx >= 0) {
+            a = nums[idx];
+            b = nums[idx + 1];
+            c = nums[idx + 2];
+            if (a + b > c)
+                return a + b + c;
+            idx--;
+        }
+        return 0;
+    }
+
+    //portal quesion
+    public static String largestNumber(int[] nums) {
+        //write your code here
+        String sarr[] = new String[nums.length];
+        for (int i = 0; i < nums.length; i++) {
+            sarr[i] = nums[i] + "";
+        }
+        Arrays.sort(sarr, (a, b) -> {
+            long d1 = Long.parseLong(a + b);
+            long d2 = Long.parseLong(b + a);
+            if (d1 > d2) {
+                return -1;
+            } else if (d1 < d2)
+                return 1;
+            else
+                return 0;
+        });
+        StringBuilder sb = new StringBuilder();
+        for (int i = sarr.length - 1; i >= 0; i--)
+            sb.append(sarr[i]);
+        return sb.toString();
+    }
+
+    //ishan and sticks-portal question
+    public static ArrayList<Integer> solve(int[] arr) {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int val : arr)
+            map.put(val, map.getOrDefault(val, 0) + 1);
+        int resarea = 0;
+        int count = 0;
+        for (int key : map.keySet()) {
+            int side = key;
+            if (map.get(key) >= 4) {
+                int area = side * side;
+                if (area > resarea) {
+                    resarea = area;
+                    count = map.get(key) / 4;
+                }
+            }
+        }
+        ArrayList<Integer> res = new ArrayList<>();
+        res.add(resarea);
+        res.add(count);
+        return res;
+
+    }
+
+    //https://practice.geeksforgeeks.org/problems/toppers-of-class3826/1
+    void kTop(node arr[], int n) {
+        // Your code goes here
+        Arrays.sort(arr, (a, b) -> {
+            if (a.marks != b.marks)
+                return b.marks - a.marks;
+            else
+                return a.index - b.index;
+        });
+
+        int min = (int) 1e9;
+        int count = 0;
+        for (int i = 0; i < arr.length && count <= n; i++) {
+            if (min > arr[i].marks)
+                count++;
+            System.out.println(arr[i].marks + " " + arr[i].index);
+        }
+
+    }
+
+    class node {
+        int marks;
+        int index;
+
+        public void setMarks(int a) {
+            this.marks = a;
+        }
+
+        public void setIndex(int b) {
+            this.index = b;
+        }
+    }
+
+    //https://practice.geeksforgeeks.org/problems/leaders-in-an-array-1587115620/1
+    static ArrayList<Integer> leaders(int arr[], int n) {
+        // Your code here
+        ArrayList<Integer> res = new ArrayList<>();
+        int rmax = -(int) 1e9;
+        for (int i = n - 1; i >= 0; i--) {
+            if (arr[i] >= rmax) {
+                res.add(arr[i]);
+                rmax = arr[i];
+            }
+        }
+        Collections.reverse(res);
+        return res;
+    }
+
 
 }
