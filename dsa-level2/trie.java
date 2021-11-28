@@ -130,26 +130,76 @@ class trie {
         }
     }
 
+    static int xdir[] = { -1, 0, 1, 0 };
+    static int ydir[] = { 0, -1, 0, 1 };
     //https://leetcode.com/problems/word-search-ii/
-    private class Node {
-        Node[] children;
-        boolean isEnd;
-        int freq;
-
-        Node() {
-            this.children = new Node[26];
-            this.isEnd = false;
-            this.freq = 0;
+    class Solution {
+        class Node{
+            Node[]children;
+            String str;
+            Node(){
+                this.children=new Node[26];
+                this.str=null;
+            }
         }
-    }
 
-    private void insert(String word, Node root) {
-        //make a trie and add words in it
-        Node root1 = new Node();
+        Node root=null;
+        Solution(){
+            this.root=new Node();
+        }
 
-    }
+        void insert(String word){
+            Node ptr=root;
+            for(int i=0;i<word.length();i++){
+                char ch=word.charAt(i);
+                if(ptr.children[ch-'a']==null){
+                    ptr.children[ch-'a']=new Node();
+                }
+                ptr=ptr.children[ch-'a'];
+            }
+            ptr.str=word;
 
-    public List<String> findWords(char[][] board, String[] words) {
+        }
+
+
+
+        public List<String> findWords(char[][] board, String[] words) {
+
+            for(String s:words)
+                insert(s);
+            boolean vis[][]=new boolean[board.length][board[0].length];
+            Node temp=this.root;
+            List<String>res=new ArrayList<>();
+            for(int i=0;i<board.length;i++){
+                for(int j=0;j<board[0].length;j++){
+                    dfs(board,i,j,vis,res,temp);
+                }
+            }
+
+            return res;
+
+        }
+
+        void dfs(char [][]board,int i,int j,boolean vis[][],List<String>res,Node temp){
+            if(temp.children[board[i][j]-'a']==null)
+                return;
+            temp=temp.children[board[i][j]-'a'];
+            if(temp.str!=null){
+                res.add(temp.str);
+                temp.str=null;
+            }
+            vis[i][j]=true;
+            for(int d=0;d<xdir.length;d++){
+                int r=i+xdir[d];
+                int c=j+ydir[d];
+                if(r>=0 && r<board.length && c>=0 && c<board[0].length && vis[r][c]==false){
+                    dfs(board,r,c,vis,res,temp);
+                }
+            }
+            vis[i][j]=false;
+
+        }
+
 
     }
 
