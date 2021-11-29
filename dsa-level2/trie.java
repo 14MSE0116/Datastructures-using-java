@@ -130,49 +130,51 @@ class trie {
         }
     }
 
-    static int xdir[] = { -1, 0, 1, 0 };
-    static int ydir[] = { 0, -1, 0, 1 };
+    static int xdir[] = {-1, 0, 1, 0};
+    static int ydir[] = {0, -1, 0, 1};
+
     //https://leetcode.com/problems/word-search-ii/
     class Solution {
-        class Node{
-            Node[]children;
+        class Node {
+            Node[] children;
             String str;
-            Node(){
-                this.children=new Node[26];
-                this.str=null;
+
+            Node() {
+                this.children = new Node[26];
+                this.str = null;
             }
         }
 
-        Node root=null;
-        Solution(){
-            this.root=new Node();
+        Node root = null;
+
+        Solution() {
+            this.root = new Node();
         }
 
-        void insert(String word){
-            Node ptr=root;
-            for(int i=0;i<word.length();i++){
-                char ch=word.charAt(i);
-                if(ptr.children[ch-'a']==null){
-                    ptr.children[ch-'a']=new Node();
+        void insert(String word) {
+            Node ptr = root;
+            for (int i = 0; i < word.length(); i++) {
+                char ch = word.charAt(i);
+                if (ptr.children[ch - 'a'] == null) {
+                    ptr.children[ch - 'a'] = new Node();
                 }
-                ptr=ptr.children[ch-'a'];
+                ptr = ptr.children[ch - 'a'];
             }
-            ptr.str=word;
+            ptr.str = word;
 
         }
-
 
 
         public List<String> findWords(char[][] board, String[] words) {
 
-            for(String s:words)
+            for (String s : words)
                 insert(s);
-            boolean vis[][]=new boolean[board.length][board[0].length];
-            Node temp=this.root;
-            List<String>res=new ArrayList<>();
-            for(int i=0;i<board.length;i++){
-                for(int j=0;j<board[0].length;j++){
-                    dfs(board,i,j,vis,res,temp);
+            boolean vis[][] = new boolean[board.length][board[0].length];
+            Node temp = this.root;
+            List<String> res = new ArrayList<>();
+            for (int i = 0; i < board.length; i++) {
+                for (int j = 0; j < board[0].length; j++) {
+                    dfs(board, i, j, vis, res, temp);
                 }
             }
 
@@ -180,23 +182,23 @@ class trie {
 
         }
 
-        void dfs(char [][]board,int i,int j,boolean vis[][],List<String>res,Node temp){
-            if(temp.children[board[i][j]-'a']==null)
+        void dfs(char[][] board, int i, int j, boolean vis[][], List<String> res, Node temp) {
+            if (temp.children[board[i][j] - 'a'] == null)
                 return;
-            temp=temp.children[board[i][j]-'a'];
-            if(temp.str!=null){
+            temp = temp.children[board[i][j] - 'a'];
+            if (temp.str != null) {
                 res.add(temp.str);
-                temp.str=null;
+                temp.str = null;
             }
-            vis[i][j]=true;
-            for(int d=0;d<xdir.length;d++){
-                int r=i+xdir[d];
-                int c=j+ydir[d];
-                if(r>=0 && r<board.length && c>=0 && c<board[0].length && vis[r][c]==false){
-                    dfs(board,r,c,vis,res,temp);
+            vis[i][j] = true;
+            for (int d = 0; d < xdir.length; d++) {
+                int r = i + xdir[d];
+                int c = j + ydir[d];
+                if (r >= 0 && r < board.length && c >= 0 && c < board[0].length && vis[r][c] == false) {
+                    dfs(board, r, c, vis, res, temp);
                 }
             }
-            vis[i][j]=false;
+            vis[i][j] = false;
 
         }
 
@@ -363,74 +365,153 @@ class trie {
 
     //Concatenad Words-https://leetcode.com/problems/concatenated-words/
     class ConcatenadWords {
-        class Node{
+        class Node {
             Node children[];
             String str;
             boolean isadded;
-            Node(){
-                this.children=new Node[26];
-                this.str=null;
+
+            Node() {
+                this.children = new Node[26];
+                this.str = null;
             }
-        }
-        Node root;
-         List<String>res;
-        ConcatenadWords(){
-            this.root=new Node();
-        }
-        void insert(String word){
-            if(word.length()==0)
-                return;
-            Node ptr=root;
-            for(int i=0;i<word.length();i++){
-                char ch=word.charAt(i);
-                if(ptr.children[ch-'a']==null){
-                    ptr.children[ch-'a']=new Node();
-                }
-                ptr=ptr.children[ch-'a'];
-            }
-            ptr.str=word;
         }
 
-        void search1(Node curr){
-            if(curr.str!=null)
-                search(curr,root);
-            for(Node child:curr.children){
-                if(child!=null)
+        Node root;
+        List<String> res;
+
+        ConcatenadWords() {
+            this.root = new Node();
+        }
+
+        void insert(String word) {
+            if (word.length() == 0)
+                return;
+            Node ptr = root;
+            for (int i = 0; i < word.length(); i++) {
+                char ch = word.charAt(i);
+                if (ptr.children[ch - 'a'] == null) {
+                    ptr.children[ch - 'a'] = new Node();
+                }
+                ptr = ptr.children[ch - 'a'];
+            }
+            ptr.str = word;
+        }
+
+        void search1(Node curr) {
+            if (curr.str != null)
+                search(curr, root);
+            for (Node child : curr.children) {
+                if (child != null)
                     search1(child);
             }
 
         }
 
-        void search(Node curr,Node n_root){
-            if(curr.str!=null && n_root.str!=null){
-                if(curr.isadded==false){
+        void search(Node curr, Node n_root) {
+            if (curr.str != null && n_root.str != null) {
+                if (curr.isadded == false) {
                     res.add(curr.str);
-                    curr.isadded=true;
-                    curr.str=null;
+                    curr.isadded = true;
+                    curr.str = null;
                 }
             }
 
-            if(n_root.str!=null)
-                search(curr,root);
+            if (n_root.str != null)
+                search(curr, root);
 
-            for(int i=0;i<26;i++){
-                if(curr.children[i]!=null && n_root.children[i]!=null){
-                    search(curr.children[i],n_root.children[i]);
+            for (int i = 0; i < 26; i++) {
+                if (curr.children[i] != null && n_root.children[i] != null) {
+                    search(curr.children[i], n_root.children[i]);
                 }
             }
         }
+
         public List<String> findAllConcatenatedWordsInADict(String[] words) {
 
-            res=new ArrayList<>();
-            for(String word:words){
+            res = new ArrayList<>();
+            for (String word : words) {
                 insert(word);
             }
-            Node ptr=root;
+            Node ptr = root;
             search1(ptr);
 
             return res;
 
         }
+    }
+
+    //648.Replace Words https://leetcode.com/problems/replace-words/
+    class ReplaceWords {
+        class Node {
+            Node[] children;
+            String str;
+
+            Node() {
+                this.children = new Node[26];
+                ;
+                this.str = null;
+            }
+        }
+
+        Node root = null;
+
+        ReplaceWords() {
+            this.root = new Node();
+        }
+
+        void insert(String word) {
+            Node ptr = root;
+            for (int i = 0; i < word.length(); i++) {
+                char ch = word.charAt(i);
+                if (ptr.children[ch - 'a'] == null) {
+                    ptr.children[ch - 'a'] = new Node();
+                }
+                ptr = ptr.children[ch - 'a'];
+                if (ptr.str != null)
+                    return;
+            }
+            ptr.str = word;
+        }
+
+        public String replaceWords(List<String> dictionary, String sentence) {
+
+            for (String s : dictionary)
+                insert(s);
+
+            StringBuilder ans = new StringBuilder();
+            String st[] = sentence.split(" ");
+
+            int i = 0;
+            while (i < st.length) {
+                String word = st[i];
+                String prefix = search(root, word);
+                if (prefix != null) {
+                    ans.append(prefix);
+                } else {
+                    ans.append(word);
+                }
+                ans.append(" ");
+                i++;
+            }
+            ans.deleteCharAt(ans.length() - 1);
+            return ans.toString();
+
+
+        }
+
+        static String search(Node ptr, String word) {
+            for (int i = 0; i < word.length(); i++) {
+                char ch = word.charAt(i);
+                if (ptr.children[ch - 'a'] == null)
+                    return null;
+                ptr = ptr.children[ch - 'a'];
+                if (ptr.str != null)
+                    return ptr.str;
+
+            }
+            return null;
+        }
+
     }
 
     public static void main(String[] args) {
