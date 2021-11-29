@@ -361,6 +361,78 @@ class trie {
         }
     }
 
+    //Concatenad Words-https://leetcode.com/problems/concatenated-words/
+    class ConcatenadWords {
+        class Node{
+            Node children[];
+            String str;
+            boolean isadded;
+            Node(){
+                this.children=new Node[26];
+                this.str=null;
+            }
+        }
+        Node root;
+         List<String>res;
+        ConcatenadWords(){
+            this.root=new Node();
+        }
+        void insert(String word){
+            if(word.length()==0)
+                return;
+            Node ptr=root;
+            for(int i=0;i<word.length();i++){
+                char ch=word.charAt(i);
+                if(ptr.children[ch-'a']==null){
+                    ptr.children[ch-'a']=new Node();
+                }
+                ptr=ptr.children[ch-'a'];
+            }
+            ptr.str=word;
+        }
+
+        void search1(Node curr){
+            if(curr.str!=null)
+                search(curr,root);
+            for(Node child:curr.children){
+                if(child!=null)
+                    search1(child);
+            }
+
+        }
+
+        void search(Node curr,Node n_root){
+            if(curr.str!=null && n_root.str!=null){
+                if(curr.isadded==false){
+                    res.add(curr.str);
+                    curr.isadded=true;
+                    curr.str=null;
+                }
+            }
+
+            if(n_root.str!=null)
+                search(curr,root);
+
+            for(int i=0;i<26;i++){
+                if(curr.children[i]!=null && n_root.children[i]!=null){
+                    search(curr.children[i],n_root.children[i]);
+                }
+            }
+        }
+        public List<String> findAllConcatenatedWordsInADict(String[] words) {
+
+            res=new ArrayList<>();
+            for(String word:words){
+                insert(word);
+            }
+            Node ptr=root;
+            search1(ptr);
+
+            return res;
+
+        }
+    }
+
     public static void main(String[] args) {
 
     }
