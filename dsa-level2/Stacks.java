@@ -236,6 +236,39 @@ public class Stacks {
         }
     }
 
+    //https://leetcode.com/problems/backspace-string-compare/
+    public boolean backspaceCompare(String s, String t) {
+        Stack<Character> st = new Stack<>();
+        Stack<Character> tt = new Stack<>();
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (ch != '#') {
+                st.push(ch);
+            } else if (st.size() > 0)
+                st.pop();
+        }
+
+        for (int i = 0; i < t.length(); i++) {
+            char ch = t.charAt(i);
+            if (ch != '#') {
+                tt.push(ch);
+            } else if (tt.size() > 0)
+                tt.pop();
+        }
+
+        if (st.size() != tt.size())
+            return false;
+        while (st.size() > 0) {
+            if (st.peek() != tt.peek())
+                return false;
+            st.pop();
+            tt.pop();
+        }
+
+        return true;
+
+    }
+
     public static void main(String[] args) {
         System.out.println("stacks");
     }
