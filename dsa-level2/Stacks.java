@@ -1,3 +1,4 @@
+import javax.naming.LinkLoopException;
 import java.util.*;
 
 public class Stacks {
@@ -199,7 +200,7 @@ public class Stacks {
 
     //https://leetcode.com/problems/minimum-insertions-to-balance-a-parentheses-string/
     public int minInsertions(String s) {
-
+        return -1;
     }
 
     //leetcode->901 https://leetcode.com/problems/online-stock-span/
@@ -266,6 +267,170 @@ public class Stacks {
         }
 
         return true;
+
+    }
+
+    // leetcode 636, https://leetcode.com/problems/exclusive-time-of-functions/
+    public int[] exclusiveTime(int n, List<String> logs) {
+        //n->number of id's
+        int res[] = new int[n];
+        Stack<ETHelper> st = new Stack<>();
+
+        for (String str : logs) {
+            String[] info = str.split(":");
+            int id = Integer.parseInt(info[0]);
+            String status = info[1];
+            int timestamp = Integer.parseInt(info[2]);
+
+            if (status.equals("start")) {
+                st.push(new ETHelper(id, timestamp, 0));
+            } else {
+                int fn_diff = timestamp - st.peek().stime + 1;
+                int exec_time = fn_diff - st.peek().cet;
+                st.pop();
+                if (st.size() > 0) {
+                    st.peek().cet += fn_diff;
+                }
+                res[id] += exec_time;
+            }
+
+        }
+        return res;
+
+    }
+
+    private class ETHelper {
+        int id;
+        int stime;
+        int cet;//child execution time
+
+        ETHelper(int id, int stime, int cet) {
+            this.id = id;
+            this.stime = stime;
+            this.cet = cet;
+        }
+    }
+
+    // leetcode 456, https://leetcode.com/problems/132-pattern/
+    public boolean find132pattern(int[] nums) {
+        int lmin[] = new int[nums.length];
+        int min = Integer.MAX_VALUE;
+        for (int i = 0; i < nums.length; i++) {
+            min = Math.min(min, nums[i]);
+            lmin[i] = min;
+        }
+
+        Stack<Integer> st = new Stack<>();
+        for (int i = nums.length - 1; i >= 0; i--) {
+            //pop
+            while (st.size() > 0 && st.peek() <= lmin[i])
+                st.pop();
+            //check for result
+            if (st.size() > 0 && st.peek() < nums[i] && lmin[i] < nums[i])
+                return true;
+            st.push(nums[i]);
+        }
+        return false;
+
+    }
+
+    // leetcode 735, https://leetcode.com/problems/asteroid-collision/
+    public int[] asteroidCollision(int[] asteroids) {
+        Stack<Integer> st = new Stack<>();
+        for (int val : asteroids) {
+            if (val > 0) {
+                st.push(val);
+            } else {
+                //val is -ve
+                //peek is positive but smaller than abs(val)
+                while (st.size() > 0 && st.peek() < -val && st.peek() > 0) {
+                    st.pop();
+                }
+                if (st.size() > 0 && st.peek() == -val)
+                    st.pop(); //equal in size but opposite in direction
+                else if (st.size() == 0 || st.peek() < 0)
+                    st.push(val);
+            }
+        }
+        int res[] = new int[st.size()];
+        for (int i = res.length - 1; i >= 0; i--)
+            res[i] = st.pop();
+        return res;
+
+    }
+
+    // leetcode 402, https://leetcode.com/problems/remove-k-digits/
+    public String removeKdigits(String num, int k) {
+        //use linked list as stack
+        LinkedList<Character> st = new LinkedList<>();
+
+        for (int i = 0; i < num.length(); i++) {
+            char ch = num.charAt(i);
+            while (k > 0 && st.size() > 0 && ch < st.getLast()) {
+                st.removeLast();
+                k--;
+            }
+            st.addLast(ch);
+        }
+        //manage remaining k's
+        while (k > 0) {
+            st.removeLast();
+            k--;
+        }
+        //manage leading zero's
+        while (st.size() > 0 && st.getFirst() == '0') {
+            st.removeFirst();
+        }
+        StringBuilder sb = new StringBuilder();
+        for (char ch : st)
+            sb.append(ch);
+        return sb.length() == 0 ? "0" : sb.toString();
+
+    }
+
+    // leetcode 316, https://leetcode.com/problems/remove-duplicate-letters/
+    //keep freqcount[] and isexists[] array
+    //for 0 to n-1
+    //freq[ch-'a']--
+    //if isexist[ch]==true continue->since duplicate shouldnt be repeated
+    /*
+      while st.peek>ch && freq[st.peek]>0
+        pop
+        isexists[peek]=false
+
+      push(ch)
+      isexists[ch]=true;
+
+
+
+     */
+    public String removeDuplicateLetters(String s) {
+        int freq[] = new int[26];
+        boolean exists[] = new boolean[26];
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            freq[ch - 'a']++;
+        }
+        LinkedList<Character> st = new LinkedList<>();
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            freq[ch - 'a']--;
+
+            if (exists[ch - 'a']) continue;
+
+            while (st.size() > 0 && st.getLast() > ch && freq[st.getLast() - 'a'] > 0) {
+                char rem = st.removeLast();
+                exists[rem - 'a'] = false;
+            }
+
+            st.addLast(ch);
+            exists[ch - 'a'] = true;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (char ch : st)
+            sb.append(ch);
+        return sb.toString();
+
 
     }
 
