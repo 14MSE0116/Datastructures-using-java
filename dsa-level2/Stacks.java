@@ -434,6 +434,151 @@ public class Stacks {
 
     }
 
+    //Trapping rain water without extra space
+    static long trappingWater(int arr[], int n) {
+        // Your code here
+        long ans = 0;
+        int l = 0;
+        int r = arr.length - 1;
+        int lmax = 0;
+        int rmax = 0;
+        while (l < r) {
+            lmax = Math.max(lmax, arr[l]);
+            rmax = Math.max(rmax, arr[r]);
+            if (lmax < rmax) {
+                ans += lmax - arr[l];
+                l++;
+            } else {
+                ans += rmax - arr[r];
+                r--;
+            }
+        }
+        return ans;
+    }
+
+    //trapping rain water 2
+    //https://leetcode.com/problems/trapping-rain-water-ii/
+    private class TRPHelper implements Comparable<TRPHelper> {
+        int x;
+        int y;
+        int ht;
+
+        TRPHelper(int x, int y, int ht) {
+            this.x = x;
+            this.y = y;
+            this.ht = ht;
+        }
+
+        public int compareTo(TRPHelper o) {
+            return this.ht - o.ht;
+        }
+    }
+
+    void addBoundaryTRW(PriorityQueue<TRPHelper> pq, int[][] hts, boolean vis[][]) {
+        //top
+        for (int c = 0; c < hts[0].length; c++) {
+            if (vis[0][c] == false) {
+                pq.add(new TRPHelper(0, c, hts[0][c]));
+                vis[0][c] = true;
+            }
+        }
+        //left
+        for (int r = 0; r < hts.length; r++) {
+            if (vis[r][0] == false) {
+                pq.add(new TRPHelper(r, 0, hts[r][0]));
+                vis[r][0] = true;
+            }
+        }
+
+
+        //right
+        for (int r = 0; r < hts.length; r++) {
+            if (vis[r][hts[0].length - 1] == false) {
+                pq.add(new TRPHelper(r, hts[0].length - 1, hts[r][hts[0].length - 1]));
+                vis[r][hts[0].length - 1] = true;
+            }
+        }
+
+        //bottom depth wall
+        for (int c = 0; c < hts[0].length; c++) {
+            if (vis[hts.length - 1][c] == false) {
+                pq.add(new TRPHelper(hts.length - 1, c, hts[hts.length - 1][c]));
+                vis[hts.length - 1][c] = true;
+            }
+        }
+    }
+
+    static int xdir[] = {-1, 0, 1, 0};
+    static int ydir[] = {0, -1, 0, 1};
+
+    public int trapRainWater(int[][] hts) {
+        boolean vis[][] = new boolean[hts.length][hts[0].length];
+        PriorityQueue<TRPHelper> pq = new PriorityQueue<>();
+        //add boundary in pq
+        addBoundaryTRW(pq, hts, vis);
+        int water = 0;
+        while (pq.size() > 0) {
+            TRPHelper rem = pq.remove();
+            for (int d = 0; d < xdir.length; d++) {
+                int r = rem.x + xdir[d];
+                int c = rem.y + ydir[d];
+                if (r >= 0 && r < hts.length && c >= 0 && c < hts[0].length
+                        && vis[r][c] == false) {
+                    if (hts[r][c] < rem.ht) {
+                        water += rem.ht - hts[r][c];
+                        pq.add(new TRPHelper(r, c, rem.ht));
+                    } else {
+                        pq.add(new TRPHelper(r, c, hts[r][c]));
+                    }
+                    vis[r][c] = true;
+                }
+            }
+        }
+
+        return water;
+    }
+
+    //Basic Calculator->leetcode 224
+    //https://leetcode.com/problems/basic-calculator/
+    public int calculate(String s) {
+        Stack<Integer> st = new Stack<>();
+        int sign = 1;
+        int sum = 0;
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (ch == ' ')
+                continue;
+            else if (ch >= '0' && ch <= '9') {
+                //number may have more than one digit
+                long n = 0;
+                while (i < s.length() && s.charAt(i) >= '0' && s.charAt(i) <= '9') {
+                    n *= 10;
+                    n += (int) (s.charAt(i) - '0');
+                    i++;
+                }
+                i--;
+                n *= sign;
+                sum += (int) n;
+                sign = 1;
+            } else if (ch == '(') {
+                st.push(sum);
+                st.push(sign);
+                sign = 1;
+                sum = 0;
+
+            } else if (ch == ')') {
+                sum *= st.pop();//multiply sign from sum
+                sum += st.pop();//add old sum in new one
+            } else if (ch == '-') {
+                sign *= -1;
+            } else {
+                //if ch is +ve
+                //nothing to do
+            }
+        }
+        return sum;
+    }
+
     public static void main(String[] args) {
         System.out.println("stacks");
     }
