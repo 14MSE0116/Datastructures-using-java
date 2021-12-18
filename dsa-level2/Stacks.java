@@ -579,6 +579,226 @@ public class Stacks {
         return sum;
     }
 
+    //Basic Calculator-2->leetcode 227
+    //https://leetcode.com/problems/basic-calculator-ii/submissions/
+    public int calculate2(String s) {
+        int ptr = 0;
+        Stack<Integer> st = new Stack<>();
+        Stack<Character> op = new Stack<>();
+        while (ptr < s.length()) {
+            char curr = s.charAt(ptr);
+            if (curr == ' ')
+                ptr++;
+            else if (curr >= '0' && curr <= '9') {
+                int val = 0;
+                while (ptr < s.length() && s.charAt(ptr) >= '0' && s.charAt(ptr) <= '9') {
+                    val = val * 10 + (s.charAt(ptr) - '0');
+                    ptr++;
+                }
+                st.push(val);
+
+            } else {
+                while (op.size() > 0 && priority(op.peek()) >= priority(curr)) {
+                    int val2 = st.pop();
+                    int val1 = st.pop();
+                    char oper = op.pop();
+                    int res = solve(val1, val2, oper);
+                    st.push(res);
+                }
+                op.push(curr);
+                ptr++;
+            }
+        }
+
+        while (op.size() > 0) {
+            char oper = op.pop();
+            int val2 = st.pop();
+            int val1 = st.pop();
+            int res = solve(val1, val2, oper);
+            st.push(res);
+        }
+        return st.peek();
+    }
+
+    int priority(char ch) {
+        if (ch == '*' || ch == '/')
+            return 2;
+        else if (ch == '+' || ch == '-')
+            return 1;
+        else
+            return 0;
+    }
+
+    int solve(int val1, int val2, char ch) {
+        if (ch == '*')
+            return val1 * val2;
+        else if (ch == '/')
+            return val1 / val2;
+        else if (ch == '-')
+            return val1 - val2;
+        else if (ch == '+')
+            return val1 + val2;
+        else
+            return 0;
+    }
+
+
+    //number of valid subarrays
+    public static int validSubarrays(int[] nums) {
+        int count = 0;
+        int nsr[] = new int[nums.length];
+        Stack<Integer> st = new Stack<>();
+        for (int i = 0; i < nums.length; i++) {
+            while (st.size() > 0 && nums[st.peek()] > nums[i]) {
+                nsr[st.pop()] = i;
+            }
+            st.push(i);
+        }
+        while (st.size() > 0)
+            nsr[st.pop()] = nums.length;
+        //take contribution
+        for (int i = 0; i < nums.length; i++) {
+            count += nsr[i] - i;
+        }
+        return count;
+    }
+
+    //Lexicographically Smallest Subsequence
+    public static int[] smallest(int[] nums, int k) {
+        // write your code here
+        Stack<Integer> st = new Stack<>();
+        k = nums.length - k;
+        for (int i = 0; i < nums.length; i++) {
+            while (st.size() > 0 && nums[i] < st.peek() && k > 0) {
+                k--;
+                st.pop();
+            }
+            st.push(nums[i]);
+        }
+        while (k > 0) {
+            st.pop();
+            k--;
+        }
+        int res[] = new int[st.size()];
+        int idx = 0;
+        while (st.size() > 0)
+            res[idx++] = st.pop();
+        for (int i = 0; i < res.length / 2; i++) {
+            int temp = res[i];
+            res[i] = res[res.length - i - 1];
+            res[res.length - i - 1] = temp;
+        }
+        return res;
+
+    }
+
+    //1381. Design a Stack With Increment Operation
+    //https://leetcode.com/problems/design-a-stack-with-increment-operation/
+    class CustomStack {
+        int val[];
+        int inc[];
+        int top;
+        public CustomStack(int maxSize) {
+            this.val=new int[maxSize];
+            this.inc=new int[maxSize];
+            this.top=-1;
+
+        }
+
+        public void push(int x) {
+            if(top+1==val.length)
+                return;
+            val[top+1]=x;
+            top++;
+        }
+
+        public int pop() {
+            if(top==-1)
+                return -1;
+            int value=val[top]+inc[top];
+            if(top!=0){
+                inc[top-1]+=inc[top];
+            }
+            inc[top]=0;
+            top--;
+            return  value;
+
+        }
+
+        public void increment(int k, int val) {
+            if(k>top+1){
+                inc[top]+=val;
+            }
+            else{
+                inc[k-1]+=val;
+            }
+        }
+    }
+
+    //641. Design Circular Deque
+    //https://leetcode.com/problems/design-circular-deque/
+    class MyCircularDeque {
+        LinkedList<Integer>list;
+        int len;
+        public MyCircularDeque(int k) {
+            list=new LinkedList<>();
+            this.len=k;
+        }
+
+        public boolean insertFront(int value) {
+            if(list.size()==this.len)
+                return false;
+            list.addFirst(value);
+            return  true;
+        }
+
+        public boolean insertLast(int value) {
+            if(list.size()==this.len)
+                return  false;
+            list.addLast(value);
+            return true;
+        }
+
+        public boolean deleteFront() {
+            if(list.size()==0)
+                return  false;
+            list.removeFirst();
+            return true;
+        }
+
+        public boolean deleteLast() {
+            if(list.size()==0)
+                return false;
+            list.removeLast();
+            return true;
+        }
+
+        public int getFront() {
+            if(list.size()==0)
+                return -1;
+            return list.getFirst();
+        }
+
+        public int getRear() {
+            if(list.size()==0)
+                return -1;
+            return list.getLast();
+        }
+
+        public boolean isEmpty() {
+            if(list.size()==0)
+                return true;
+            return false;
+        }
+
+        public boolean isFull() {
+            if(list.size()==this.len)
+                return true;
+            return false;
+        }
+    }
+
+
     public static void main(String[] args) {
         System.out.println("stacks");
     }
