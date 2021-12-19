@@ -798,6 +798,136 @@ public class Stacks {
         }
     }
 
+    //Max stack
+    //https://www.lintcode.com/problem/859/
+    class MaxStack {
+        Stack<Integer>vs=new Stack<>();//value stack
+        Stack<Integer>ms=new Stack<>();//max stack
+        public MaxStack() {
+            // do intialization if necessary
+            vs=new Stack<>();
+            ms=new Stack<>();
+        }
+
+        /*
+         * @param number: An integer
+         * @return: nothing
+         */
+        public void push(int x) {
+            // write your code here
+            vs.push(x);
+
+            if(ms.size()==0)
+                ms.push(x);
+            else{
+                ms.push(Math.max(x,ms.peek()));
+            }
+        }
+
+        public int pop() {
+            // write your code here
+            ms.pop();
+            return vs.pop();
+        }
+
+        /*
+         * @return: An integer
+         */
+        public int top() {
+            // write your code here
+            return vs.peek();
+        }
+
+        /*
+         * @return: An integer
+         */
+        public int peekMax() {
+            // write your code here
+            return ms.peek();
+        }
+
+        /*
+         * @return: An integer
+         */
+        public int popMax() {
+            // write your code here
+            int max=ms.peek();
+            Stack<Integer>helper=new Stack<>();
+            while (vs.peek()!=max){
+                ms.pop();
+                helper.push(vs.pop());
+            }
+            vs.pop();
+            ms.pop();
+            while (helper.size()>0){
+                push(helper.pop());
+            }
+            return  max;
+        }
+    }
+
+    //Check If Word Is Valid After Insertion
+    public boolean isValid(String s) {
+        Stack<Character>st=new Stack<>();
+        for(int i=0;i<s.length();i++){
+            char ch=s.charAt(i);
+            if(ch=='c'){
+                if(st.size()>=2 && st.pop()=='b' && st.pop()=='a')
+                    continue;//since pair can match
+                return  false;
+            }
+            else{
+                st.push(ch);
+            }
+        }
+        return st.size()==0;
+    }
+
+    //Design Hit count->pepcoding portal
+    static class HitCounter {
+            Queue<Integer>qu;
+        /** Initialize your data structure here. */
+        public HitCounter() {
+            qu=new ArrayDeque<>();
+        }
+
+        /** Record a hit.
+         @param timestamp - The current timestamp (in seconds granularity). */
+        public void hit(int timestamp) {
+            qu.add(timestamp);
+            int sp=timestamp-300+1;
+            while (qu.peek()<sp)
+                qu.remove();
+        }
+
+        /** Return the number of hits in the past 5 minutes.
+         @param timestamp - The current timestamp (in seconds granularity). */
+        public int getHits(int timestamp) {
+            int start=timestamp-300+1;
+            while (qu.peek()<start)
+                qu.remove();
+            return qu.size();
+        }
+    }
+
+    //933. Number of Recent Calls
+    //https://leetcode.com/problems/number-of-recent-calls/
+    class RecentCounter {
+
+        Queue<Integer>qu;
+        public RecentCounter() {
+            qu=new ArrayDeque<>();
+        }
+
+        public int ping(int t) {
+            qu.add(t);
+            int start=t-3000;
+            while(qu.peek()<start)
+                qu.remove();
+            return qu.size();
+        }
+    }
+
 
     public static void main(String[] args) {
         System.out.println("stacks");
