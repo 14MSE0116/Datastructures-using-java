@@ -698,39 +698,39 @@ public class Stacks {
         int val[];
         int inc[];
         int top;
+
         public CustomStack(int maxSize) {
-            this.val=new int[maxSize];
-            this.inc=new int[maxSize];
-            this.top=-1;
+            this.val = new int[maxSize];
+            this.inc = new int[maxSize];
+            this.top = -1;
 
         }
 
         public void push(int x) {
-            if(top+1==val.length)
+            if (top + 1 == val.length)
                 return;
-            val[top+1]=x;
+            val[top + 1] = x;
             top++;
         }
 
         public int pop() {
-            if(top==-1)
+            if (top == -1)
                 return -1;
-            int value=val[top]+inc[top];
-            if(top!=0){
-                inc[top-1]+=inc[top];
+            int value = val[top] + inc[top];
+            if (top != 0) {
+                inc[top - 1] += inc[top];
             }
-            inc[top]=0;
+            inc[top] = 0;
             top--;
-            return  value;
+            return value;
 
         }
 
         public void increment(int k, int val) {
-            if(k>top+1){
-                inc[top]+=val;
-            }
-            else{
-                inc[k-1]+=val;
+            if (k > top + 1) {
+                inc[top] += val;
+            } else {
+                inc[k - 1] += val;
             }
         }
     }
@@ -738,61 +738,62 @@ public class Stacks {
     //641. Design Circular Deque
     //https://leetcode.com/problems/design-circular-deque/
     class MyCircularDeque {
-        LinkedList<Integer>list;
+        LinkedList<Integer> list;
         int len;
+
         public MyCircularDeque(int k) {
-            list=new LinkedList<>();
-            this.len=k;
+            list = new LinkedList<>();
+            this.len = k;
         }
 
         public boolean insertFront(int value) {
-            if(list.size()==this.len)
+            if (list.size() == this.len)
                 return false;
             list.addFirst(value);
-            return  true;
+            return true;
         }
 
         public boolean insertLast(int value) {
-            if(list.size()==this.len)
-                return  false;
+            if (list.size() == this.len)
+                return false;
             list.addLast(value);
             return true;
         }
 
         public boolean deleteFront() {
-            if(list.size()==0)
-                return  false;
+            if (list.size() == 0)
+                return false;
             list.removeFirst();
             return true;
         }
 
         public boolean deleteLast() {
-            if(list.size()==0)
+            if (list.size() == 0)
                 return false;
             list.removeLast();
             return true;
         }
 
         public int getFront() {
-            if(list.size()==0)
+            if (list.size() == 0)
                 return -1;
             return list.getFirst();
         }
 
         public int getRear() {
-            if(list.size()==0)
+            if (list.size() == 0)
                 return -1;
             return list.getLast();
         }
 
         public boolean isEmpty() {
-            if(list.size()==0)
+            if (list.size() == 0)
                 return true;
             return false;
         }
 
         public boolean isFull() {
-            if(list.size()==this.len)
+            if (list.size() == this.len)
                 return true;
             return false;
         }
@@ -801,12 +802,13 @@ public class Stacks {
     //Max stack
     //https://www.lintcode.com/problem/859/
     class MaxStack {
-        Stack<Integer>vs=new Stack<>();//value stack
-        Stack<Integer>ms=new Stack<>();//max stack
+        Stack<Integer> vs = new Stack<>();//value stack
+        Stack<Integer> ms = new Stack<>();//max stack
+
         public MaxStack() {
             // do intialization if necessary
-            vs=new Stack<>();
-            ms=new Stack<>();
+            vs = new Stack<>();
+            ms = new Stack<>();
         }
 
         /*
@@ -817,10 +819,10 @@ public class Stacks {
             // write your code here
             vs.push(x);
 
-            if(ms.size()==0)
+            if (ms.size() == 0)
                 ms.push(x);
-            else{
-                ms.push(Math.max(x,ms.peek()));
+            else {
+                ms.push(Math.max(x, ms.peek()));
             }
         }
 
@@ -851,60 +853,68 @@ public class Stacks {
          */
         public int popMax() {
             // write your code here
-            int max=ms.peek();
-            Stack<Integer>helper=new Stack<>();
-            while (vs.peek()!=max){
+            int max = ms.peek();
+            Stack<Integer> helper = new Stack<>();
+            while (vs.peek() != max) {
                 ms.pop();
                 helper.push(vs.pop());
             }
             vs.pop();
             ms.pop();
-            while (helper.size()>0){
+            while (helper.size() > 0) {
                 push(helper.pop());
             }
-            return  max;
+            return max;
         }
     }
 
     //Check If Word Is Valid After Insertion
     public boolean isValid(String s) {
-        Stack<Character>st=new Stack<>();
-        for(int i=0;i<s.length();i++){
-            char ch=s.charAt(i);
-            if(ch=='c'){
-                if(st.size()>=2 && st.pop()=='b' && st.pop()=='a')
+        Stack<Character> st = new Stack<>();
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (ch == 'c') {
+                if (st.size() >= 2 && st.pop() == 'b' && st.pop() == 'a')
                     continue;//since pair can match
-                return  false;
-            }
-            else{
+                return false;
+            } else {
                 st.push(ch);
             }
         }
-        return st.size()==0;
+        return st.size() == 0;
     }
 
     //Design Hit count->pepcoding portal
     static class HitCounter {
-            Queue<Integer>qu;
-        /** Initialize your data structure here. */
+        Queue<Integer> qu;
+
+        /**
+         * Initialize your data structure here.
+         */
         public HitCounter() {
-            qu=new ArrayDeque<>();
+            qu = new ArrayDeque<>();
         }
 
-        /** Record a hit.
-         @param timestamp - The current timestamp (in seconds granularity). */
+        /**
+         * Record a hit.
+         *
+         * @param timestamp - The current timestamp (in seconds granularity).
+         */
         public void hit(int timestamp) {
             qu.add(timestamp);
-            int sp=timestamp-300+1;
-            while (qu.peek()<sp)
+            int sp = timestamp - 300 + 1;
+            while (qu.peek() < sp)
                 qu.remove();
         }
 
-        /** Return the number of hits in the past 5 minutes.
-         @param timestamp - The current timestamp (in seconds granularity). */
+        /**
+         * Return the number of hits in the past 5 minutes.
+         *
+         * @param timestamp - The current timestamp (in seconds granularity).
+         */
         public int getHits(int timestamp) {
-            int start=timestamp-300+1;
-            while (qu.peek()<start)
+            int start = timestamp - 300 + 1;
+            while (qu.peek() < start)
                 qu.remove();
             return qu.size();
         }
@@ -914,17 +924,49 @@ public class Stacks {
     //https://leetcode.com/problems/number-of-recent-calls/
     class RecentCounter {
 
-        Queue<Integer>qu;
+        Queue<Integer> qu;
+
         public RecentCounter() {
-            qu=new ArrayDeque<>();
+            qu = new ArrayDeque<>();
         }
 
         public int ping(int t) {
             qu.add(t);
-            int start=t-3000;
-            while(qu.peek()<start)
+            int start = t - 3000;
+            while (qu.peek() < start)
                 qu.remove();
             return qu.size();
+        }
+    }
+
+    //Moving Average from Data Stream
+    //https://www.lintcode.com/problem/642/description
+    public class MovingAverage {
+        /*
+         * @param size: An integer
+         */
+        Queue<Integer> qu;
+        int size;
+        double sum;
+
+        public MovingAverage(int size) {
+            // do intialization if necessary
+            this.qu = new ArrayDeque<>();
+            this.size = size;
+        }
+
+        /*
+         * @param val: An integer
+         * @return:
+         */
+        public double next(int val) {
+            // write your code here
+            sum += val;
+            if (qu.size() == this.size) {
+                sum -= qu.remove();
+            }
+            qu.add(val);
+            return sum / qu.size();
         }
     }
 

@@ -2,10 +2,18 @@ import java.util.*;
 import java.io.*;
 
 public class HashMapp {
-
-    private static void printemployee(String[][] relations) {
-        HashMap<String, HashSet<String>> map = new HashMap();
-
+    //Number Of Employees Under Every Manager
+    static int getsize(HashMap<String, HashSet<String>> map, String ceo) {
+        if (map.get(ceo) == null) {
+            System.out.println(ceo + " " + 0);
+            return 1;
+        }
+        int count = 0;
+        for (String child : map.get(ceo)) {
+            count += getsize(map, child);
+        }
+        System.out.println(ceo + " " + count);
+        return count + 1;
     }
 
     // Find Iternnary from tickets
