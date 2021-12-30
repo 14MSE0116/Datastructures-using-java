@@ -95,6 +95,133 @@ public class HashMapp {
 
     }
 
+    //https://practice.geeksforgeeks.org/problems/largest-subarray-with-0-sum/1
+    //Largest Subarray with 0 sum
+    int maxLen(int arr[], int n) {
+        // Your code here
+        int len = 0;
+        HashMap<Integer, Integer> map = new HashMap<>();
+        map.put(0, -1);
+        int psum = 0;
+        for (int i = 0; i < n; i++) {
+            psum += arr[i];
+            if (map.containsKey(psum)) {
+                len = Math.max(len, i - map.get(psum));
+            } else
+                map.put(psum, i);
+        }
+        return len;
+    }
+
+    //count of subarrays with zero sum
+    public static int solution(int[] arr) {
+        // write your code here
+        int res = 0;
+        int psum = 0;
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < arr.length; i++) {
+            psum += arr[i];
+            if (map.containsKey(psum)) {
+                res += map.get(psum);
+                map.put(psum, map.get(psum) + 1);
+            } else {
+                map.put(psum, 1);
+            }
+        }
+
+        return res;
+    }
+
+    //https://leetcode.com/problems/contiguous-array/
+    //Given a binary array nums, return the maximum length of a contiguous subarray with an equal number of 0 and 1.
+    public int findMaxLength(int[] nums) {
+        int psum = 0;
+        int len = 0;
+        HashMap<Integer, Integer> map = new HashMap<>();
+        map.put(0, -1);
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == 0) {
+                psum += -1;
+            } else {
+                psum += 1;
+            }
+            if (map.containsKey(psum)) {
+                len = Math.max(len, i - map.get(psum));
+            } else {
+                map.put(psum, i);
+            }
+        }
+        return len;
+
+    }
+
+    //https://practice.geeksforgeeks.org/problems/count-subarrays-with-equal-number-of-1s-and-0s-1587115620/1
+    //Subarrays with equal 1s and 0s
+    static int countSubarrWithEqualZeroAndOne(int arr[], int n)
+    {
+        // add your code here
+        HashMap<Integer,Integer>map=new HashMap<>();
+        int psum=0;
+        int count=0;
+        map.put(0,1);
+        for(int i=0;i<n;i++){
+            if(arr[i]==0){
+                psum-=1;
+            }
+            else
+                psum+=1;
+
+            if(map.containsKey(psum)){
+                count+=map.get(psum);
+                map.put(psum,map.get(psum)+1);
+            }
+            else
+                map.put(psum,1);
+
+        }
+        return count;
+    }
+
+    //Maximum Size Subarray Sum Equals K->Portal question
+    public static int lenOfLongSubarr (int A[], int N, int K) {
+        //Complete the function
+        int psum=0;
+        HashMap<Integer,Integer>map=new HashMap<>();
+        map.put(0,-1);
+        int len=0;
+        for(int i=0;i<A.length;i++){
+            psum+=A[i];
+            if(map.containsKey(psum-K)){
+                len=Math.max(len,i-map.get(psum-K));
+            }
+            else if(map.containsKey(psum)==false){
+                map.put(psum,i);
+            }
+        }
+        return  len;
+    }
+
+    //Count Of Subarrays Having Sum Equals To K
+    //leetcode 560
+    public static int solution1(int[] arr, int k){
+        // write your code here
+        HashMap<Integer,Integer>map=new HashMap<>();
+        int psum=0;
+        map.put(0,1);
+        int count=0;
+        for(int val:arr){
+            psum+=val;
+            if(map.containsKey(psum-k)){
+                count+=map.get(psum-k);
+            }
+            map.put(psum,map.getOrDefault(psum,0)+1);
+
+        }
+
+        return count;
+    }
+
+
     public static void main(String[] args) {
 
     }
