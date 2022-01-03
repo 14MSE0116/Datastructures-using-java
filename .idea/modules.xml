@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Datastructures-using-java.iml" filepath="$PROJECT_DIR$/Datastructures-using-java.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dsa-level1/dsa-level1.iml" filepath="$PROJECT_DIR$/dsa-level1/dsa-level1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dsa-level1/test_solution_recursion_16may/test_solution_recursion_16may.iml" filepath="$PROJECT_DIR$/dsa-level1/test_solution_recursion_16may/test_solution_recursion_16may.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dsa-level1/trees/trees.iml" filepath="$PROJECT_DIR$/dsa-level1/trees/trees.iml" />
+    </modules>
+  </component>
+</project>

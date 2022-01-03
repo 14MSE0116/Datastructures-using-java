@@ -85,7 +85,7 @@ class priorityqueue1 {
         upheapify(data.size() - 1);
     }
 
-    public void downheapify(int idx) {
+    public void  downheapify(int idx) {
         int min = idx;
         int lcn = 2 * idx + 1;
         int rcn = 2 * idx + 2;
