@@ -139,6 +139,64 @@ class graphs {
         return count == 0 ? ans : -1;
     }
 
+    //815. Bus Routes
+    //https://leetcode.com/problems/bus-routes/
+    class Solution {
+        public int numBusesToDestination(int[][] routes, int source, int target) {
+            HashMap<Integer, ArrayList<Integer>> map = new HashMap<>();
+            makebusstopvsbusnomap(routes, map);
+            System.out.println(map);
+
+            Queue<Integer> qu = new LinkedList<>();
+            HashSet<Integer> visbus = new HashSet<>();
+            HashSet<Integer> visbusstop = new HashSet<>();
+
+            qu.add(source);
+            visbusstop.add(source);
+            int lvl = 0;
+
+            while (qu.size() > 0) {
+                int sz = qu.size();
+                while (sz-- > 0) {
+                    Integer rem = qu.remove();
+                    if (rem == target)
+                        return lvl;
+                    for (int busnum : map.get(rem)) {
+                        if (visbus.contains(busnum))
+                            continue;
+                        else {
+                            for (int busstopp : routes[busnum]) {
+                                if (visbusstop.contains(busstopp) == false) {
+                                    visbusstop.add(busstopp);
+                                    qu.add(busstopp);
+                                }
+                            }
+                            visbus.add(busnum);
+                        }
+                    }
+                }
+                lvl++;
+            }
+            return -1;
+        }
+
+        void makebusstopvsbusnomap(int routes[][], HashMap<Integer, ArrayList<Integer>> map) {
+            for (int r = 0; r < routes.length; r++) {
+                int busno = r;
+                for (int c = 0; c < routes[r].length; c++) {
+                    int busstop = routes[r][c];
+                    if (map.containsKey(busstop)) {
+                        map.get(busstop).add(busno);
+                    } else {
+                        ArrayList<Integer> subbusno = new ArrayList<>();
+                        subbusno.add(busno);
+                        map.put(busstop, subbusno);
+                    }
+                }
+            }
+        }
+    }
+
     public static void main(String[] args) {
 
     }
