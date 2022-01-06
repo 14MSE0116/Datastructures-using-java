@@ -191,144 +191,44 @@ class graphs {
         }
     }
 
-    //ACQUIRE AND HOLD STRATEGY
-    //the smallest substring of string containing all characters of another string
-    public static String solution(String s1, String s2) {
-        // write your code here
-
-        //freq map for string 2
-        HashMap<Character, Integer> fmap = new HashMap<>();
-        for (int i = 0; i < s2.length(); i++)
-            fmap.put(s2.charAt(i), fmap.getOrDefault(s2.charAt(i), 0) + 1);
-
-        int acq = -1; //acquire
-        int rel = -1; //release
-
-        int count = 0;
-        int requirement = s2.length();
-        String ans = "";
-        HashMap<Character, Integer> map = new HashMap<>();
-        while (true) {
-            boolean acflag = false;
-            boolean relflag = false;
-            //acquire
-            while (acq < s1.length() - 1 && count < requirement) {
-                acq++;
-                char ch = s1.charAt(acq);
-                map.put(ch, map.getOrDefault(ch, 0) + 1);
-
-                //conditional increment in count
-                if (map.get(ch) <= fmap.getOrDefault(ch, 0)) count++;
-                acflag = true;
-
+    //Mother Vertex
+    //https://practice.geeksforgeeks.org/problems/mother-vertex/1/
+    class MotherVertex {
+        //Function to find a Mother Vertex in the Graph.
+        public int findMotherVertex(int V, ArrayList<ArrayList<Integer>> adj) {
+            // Code here
+            boolean vis[] = new boolean[V];
+            Stack<Integer> st = new Stack<>();
+            for (int i = 0; i < V; i++) {
+                if (vis[i] == false) dfsForStack(adj, i, vis, st);
             }
 
+            int ans = st.peek();
+            count = 0;
+            vis = new boolean[V];
+            dfsForCount(adj, ans, vis);
+            return count == V ? ans : -1;
 
-            //release
-            while (rel < acq && count == requirement) {
-                //hold answer,if smallest then update the result
-                String tempans = s1.substring(rel + 1, acq + 1);
-                ans = ans.length() == 0 || tempans.length() < ans.length() ? tempans : ans;
 
-                //get the character and remove from map
-                rel++;
-                char ch = s1.charAt(rel);
-                map.put(ch, map.get(ch) - 1);
-
-                if (map.get(ch) == 0) map.remove(ch);
-
-                //decrement in count if release is invalid
-                if (map.getOrDefault(ch, 0) < fmap.getOrDefault(ch, 0)) count--;
-
-                relflag = true;
-            }
-
-            if (acflag == false && relflag == false) break;
         }
 
+        static int count;
 
-        return null;
-    }
-
-    public static int smallestuniquesubstritself(String str) {
-        // write your code here
-        HashSet<Character> set = new HashSet<>();
-        for (int i = 0; i < str.length(); i++)
-            set.add(str.charAt(i));
-
-        int acq = -1;
-        int rel = -1;
-        HashMap<Character, Integer> map = new HashMap<>();
-        int ans = Integer.MAX_VALUE;
-        while (true) {
-            boolean acflag = false;
-            boolean reflag = false;
-            //acquire
-            while (acq + 1 < str.length() && map.size() < set.size()) {
-                acq++;
-                char ch = str.charAt(acq);
-                map.put(ch, map.getOrDefault(ch, 0) + 1);
-                acflag = true;
+        void dfsForCount(ArrayList<ArrayList<Integer>> graph, int src, boolean vis[]) {
+            vis[src] = true;
+            count++;
+            for (int nbr : graph.get(src)) {
+                if (vis[nbr] == false) dfsForCount(graph, nbr, vis);
             }
-
-            //release
-            while (map.size() == set.size()) {
-                int templen = acq - rel;
-                ans = Math.min(ans, templen);
-
-                rel++;
-                char ch = str.charAt(rel);
-                map.put(ch, map.get(ch) - 1);
-                if (map.get(ch) == 0) map.remove(ch);
-                reflag = true;
-            }
-
-            if (acflag == false && reflag == false) break;
         }
-        return ans;
-    }
 
-    //Longest Substring with non repeating characters
-    public static int longsubstrwithnonrepeatchar(String str) {
-        // write your code here
-        HashMap<Character, Integer> map = new HashMap<>();
-        int rel = -1;
-        int acq = -1;
-        int anslen = 0;
-        while (true) {
-            boolean acflag = false;
-            boolean reflag = false;
-
-            //acquire
-            while (acq + 1 < str.length()) {
-                acq++;
-                acflag = true;
-                char ch = str.charAt(acq);
-                map.put(ch, map.getOrDefault(ch, 0) + 1);
-
-                if (map.get(ch) == 2) break;
-                else {
-                    int templen = acq - rel;
-                    if (templen > anslen) anslen = templen;
-                }
-
+        void dfsForStack(ArrayList<ArrayList<Integer>> graph, int src, boolean vis[], Stack<Integer> st) {
+            vis[src] = true;
+            for (int nbr : graph.get(src)) {
+                if (vis[nbr] == false) dfsForStack(graph, nbr, vis, st);
             }
-
-            //release
-            while (rel < acq) {
-                rel++;
-                char ch = str.charAt(rel);
-                map.put(ch, map.get(ch) - 1);
-                if (map.get(ch) == 1) {
-                    //after reducing if freq is 1 that means,its repeating
-                    break;
-                }
-                reflag = true;
-            }
-            if (acflag == false && reflag == false) break;
-
+            st.push(src);
         }
-        return anslen;
     }
 
     public static void main(String[] args) {
