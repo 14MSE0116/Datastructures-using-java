@@ -492,6 +492,14 @@ public class HashMapp {
         return anslen;
     }
 
+    //Count Of Substrings Having All Unique Characters
+    public static int solution(String str) {
+        // write your code here
+
+       return  0;
+    }
+
+
 
     public static void main(String[] args) {
 
