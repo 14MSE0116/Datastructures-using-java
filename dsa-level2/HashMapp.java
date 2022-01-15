@@ -1,3 +1,4 @@
+import java.lang.management.MemoryType;
 import java.util.*;
 import java.io.*;
 
@@ -23,8 +24,7 @@ public class HashMapp {
         for (String city1 : tickets.keySet()) {
             String city2 = tickets.get(city1);
             map.put(city2, false);
-            if (map.containsKey(city1) == false)
-                map.put(city1, true);
+            if (map.containsKey(city1) == false) map.put(city1, true);
         }
         String src = "";
         for (String city : map.keySet()) {
@@ -63,8 +63,7 @@ public class HashMapp {
             // remove impact of j
             if (map.get(arr[j]) == 1) {
                 map.remove(arr[j]);
-            } else
-                map.put(arr[j], map.get(arr[j]) - 1);
+            } else map.put(arr[j], map.get(arr[j]) - 1);
         }
         return res;
 
@@ -107,8 +106,7 @@ public class HashMapp {
             psum += arr[i];
             if (map.containsKey(psum)) {
                 len = Math.max(len, i - map.get(psum));
-            } else
-                map.put(psum, i);
+            } else map.put(psum, i);
         }
         return len;
     }
@@ -166,14 +164,12 @@ public class HashMapp {
         for (int i = 0; i < n; i++) {
             if (arr[i] == 0) {
                 psum -= 1;
-            } else
-                psum += 1;
+            } else psum += 1;
 
             if (map.containsKey(psum)) {
                 count += map.get(psum);
                 map.put(psum, map.get(psum) + 1);
-            } else
-                map.put(psum, 1);
+            } else map.put(psum, 1);
 
         }
         return count;
@@ -496,9 +492,182 @@ public class HashMapp {
     public static int solution(String str) {
         // write your code here
 
-       return  0;
+        return 0;
     }
 
+    //K Anagram-Checker->Nados portal question
+    public static boolean areKAnagrams(String str1, String str2, int k) {
+        // write your code here
+        if (str1.length() != str2.length()) return false;
+        HashMap<Character, Integer> map = new HashMap<>();
+        for (int i = 0; i < str1.length(); i++) {
+            char ch = str1.charAt(i);
+            map.put(ch, map.getOrDefault(ch, 0) + 1);
+        }
+
+        //reduce mapping from s2
+        for (int i = 0; i < str2.length(); i++) {
+            char ch = str2.charAt(i);
+            if (map.getOrDefault(ch, 0) > 0) map.put(ch, map.get(ch) - 1);
+        }
+
+        int count = 0;
+        for (char ch : map.keySet())
+            count += map.get(ch);
+
+        return count <= k;
+    }
+
+    //group anagrams together
+    //https://practice.geeksforgeeks.org/problems/print-anagrams-together/1
+    public List<List<String>> Anagrams(String[] string_list) {
+        // Code here
+        HashMap<HashMap<Character, Integer>, List<String>> map = new HashMap<>();
+        for (String val : string_list) {
+            HashMap<Character, Integer> fmap = new HashMap<>();
+            for (int i = 0; i < val.length(); i++) {
+                char ch = val.charAt(i);
+                fmap.put(ch, fmap.getOrDefault(ch, 0) + 1);
+            }
+            if (map.containsKey(fmap)) {
+                map.get(fmap).add(val);
+            } else {
+                List<String> list = new ArrayList<>();
+                list.add(val);
+                map.put(fmap, list);
+            }
+        }
+
+        List<List<String>> res = new ArrayList<>();
+        for (List<String> subres : map.values()) {
+            res.add(subres);
+        }
+        return res;
+
+    }
+
+    //Check arithmetic seqeunce portal question(Nados)
+    public static boolean solutionn(int[] arr) {
+        //find min and max,add element in hashset
+        HashSet<Integer> set = new HashSet<>();
+        int min = Integer.MAX_VALUE;
+        int max = Integer.MIN_VALUE;
+
+        for (int val : arr) {
+            min = Math.min(val, min);
+            max = Math.max(val, max);
+            set.add(val);
+        }
+
+        int n = arr.length;
+        int d = (max - min) / (n - 1);
+        int sum = min;
+        while (sum < max) {
+            sum += d;
+            if (set.contains(sum) == false)
+                return false;
+        }
+
+        return true;
+    }
+
+    //166. Fraction to Recurring Decimal
+    //https://leetcode.com/problems/fraction-to-recurring-decimal/
+    public String fractionToDecimal(int numerator, int denominator) {
+        StringBuilder ans = new StringBuilder();
+        //for managing negative cases
+        if ((numerator > 0 && denominator < 0) || (numerator < 0 && denominator > 0))
+            ans.append("-");
+
+        int q = numerator / denominator;
+        int rem = numerator % denominator;
+        ans.append(q);
+        if (rem == 0)
+            return ans.toString();
+        ans.append(".");
+        HashMap<Integer, Integer> map = new HashMap<>(); //for storing repeting
+        //for charecters after decimal
+        while (rem != 0) {
+            map.put(rem, ans.length());
+            rem *= 10;
+            q = rem / denominator;
+            rem = rem % denominator;
+            ans.append(q);
+            if (map.containsKey(rem)) {
+                //insert brackets
+                int si = map.get(rem);
+                ans.insert(si, "(");
+                ans.append(")");
+                break;
+
+            }
+        }
+        return ans.toString();
+    }
+
+    //portal question count equivalent subarrays
+    int countequivsubarrays(int arr[]) {
+        int n = arr.length;
+        HashSet<Integer> set = new HashSet<>();
+        for (int val : arr)
+            set.add(val);
+        int k = set.size();
+
+        //solve for number of subarrays having k distinct elements
+        int acq = -1;
+        int rel = -1;
+        HashMap<Integer, Integer> map = new HashMap<>();
+        int count = 0;
+        while (true) {
+            boolean relflag = false;
+            boolean acflag = false;
+            while (acq < n - 1) {
+                acflag = true;
+                acq++;
+                int val = arr[acq];
+                map.put(val, map.getOrDefault(val, 0) + 1);
+                if (map.size() == k) {
+                    count += n - acq;
+                    break;
+                }
+            }
+
+            while (rel < acq) {
+                relflag = true;
+                rel++;
+                int val = arr[rel];
+                map.put(val, map.get(val) - 1);
+                if (map.get(val) == 0) {
+                    map.remove(val);
+                }
+                if (map.size() == k)
+                    count += n - acq;
+                else
+                    break;
+
+            }
+            if (acflag == false && relflag == false)
+                break;
+        }
+        return count;
+
+    }
+
+    //Pair with equal sum
+    public static boolean pairwithequlsum(int[] arr) {
+        // write your code here
+        HashSet<Integer> set = new HashSet<>();
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = i + 1; j < arr.length; j++) {
+                int sum = arr[i] + arr[j];
+                if (set.contains(sum))
+                    return true;
+                set.add(sum);
+            }
+        }
+
+        return false;
+    }
 
 
     public static void main(String[] args) {
