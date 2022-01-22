@@ -669,9 +669,32 @@ public class HashMapp {
         return false;
     }
 
+    //Pair with given sum
+    public static int solve(int[][] num1, int[][] num2, int k) {
+        // write your code here
+        HashMap<Integer, Integer> map = new HashMap<>();
+        int count = 0;
+
+        for (int i = 0; i < num1.length; i++) {
+            for (int j = 0; j < num1[0].length; j++) {
+                map.put(num1[i][j], map.getOrDefault(num1[i][j], 0) + 1);
+            }
+        }
+
+        for (int i = 0; i < num2.length; i++) {
+            for (int j = 0; j < num2[0].length; j++) {
+                count += map.getOrDefault(k - num2[i][j], 0);
+            }
+        }
+
+
+        return count;
+    }
+
 
     public static void main(String[] args) {
-
+        Integer s=Integer.valueOf(28);
+        System.out.println(Integer.valueOf(280));
     }
 
 }
