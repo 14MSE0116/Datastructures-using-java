@@ -45,6 +45,7 @@ class dsu {
         return count;
     }
 
+
     public static void main(String[] args) {
         int[][] pairs = {
                 {1, 2},
