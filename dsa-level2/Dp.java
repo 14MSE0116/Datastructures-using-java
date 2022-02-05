@@ -87,6 +87,26 @@ public class Dp {
 
     //stock buy and sell with k transactions allowed
 
+    //Maximum length of pair chain
+    public static int findLongestChain(int[][] pairs) {
+        //Write your code here
+        Arrays.sort(pairs, (a, b) -> Integer.compare(a[0], b[0]));
+        int dp[] = new int[pairs.length];
+        dp[0] = 1;
+        for (int i = 1; i < pairs.length; i++) {
+            dp[i] = 1;
+            for (int j = 0; j < i; j++) {
+                if (pairs[i][0] > pairs[j][1] && dp[j] + 1 > dp[i])
+                    dp[i] = dp[j] + 1;
+            }
+        }
+        int ans = 1;
+        for (int val : dp)
+            ans = Math.max(ans, val);
+        return ans;
+
+    }
+
 
     public static void main(String[] args) {
 
