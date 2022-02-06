@@ -107,6 +107,70 @@ public class Dp {
 
     }
 
+    //188. Best Time to Buy and Sell Stock IV
+    //https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/
+    public int maxProfit(int k, int[] prices) {
+        int n = prices.length;
+        if (k == 0 || n <= 1)
+            return 0;
+        if (k * 2 > n) {
+            int profit = 0;
+            for (int i = 1; i < prices.length; i++) {
+                if (prices[i] > prices[i - 1])
+                    profit += prices[i] - prices[i - 1];
+            }
+            return profit;
+        }
+
+        //case 3
+        int dp[] = new int[2 * k + 1];
+        dp[0] = -prices[0];
+        for (int i = 1; i <= 2 * k; i++) {
+            if (i % 2 == 0)
+                dp[i] = Integer.MIN_VALUE;
+            else
+                continue;
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < 2 * k; j++) {
+                if (j == 0)
+                    dp[j] = Math.max(dp[j], -prices[i]);
+                else if (j % 2 == 0) {
+                    //even its buying time
+                    dp[j] = Math.max(dp[j], dp[j - 1] - prices[i]);
+                } else {
+                    //its selling time
+                    dp[j] = Math.max(dp[j], dp[j - 1] + prices[i]);
+
+                }
+            }
+        }
+        return dp[2 * k - 1];
+
+    }
+
+    //longest increasing sequence
+    static int lis(int arr[]) {
+        int dp[] = new int[arr.length];
+        dp[0] = 1;
+
+        for (int i = 1; i < arr.length; i++) {
+            dp[i] = 1;
+            for (int j = 0; j < i; j++) {
+                if (arr[i] > arr[j] && dp[j] + 1 > dp[i]) {
+                    dp[i] = dp[j] + 1;
+                }
+            }
+        }
+
+        int ans = 0;
+        for (int i = 0; i < dp.length; i++)
+            ans = Math.max(ans, dp[i]);
+
+        return ans;
+    }
+
 
     public static void main(String[] args) {
 
