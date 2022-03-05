@@ -442,6 +442,14 @@ public class Dp {
         }
     }
 
+    //longest common subsequence
+    static int lcs(String str1,String str2){
+        int n1=str1.length();
+        int n2=str2.length();
+        int dp[][]=new int[n1][n2];
+
+    }
+
     public static void main(String[] args) {
 
     }
